@@ -1,0 +1,13 @@
+body {
+    background-color: darkslategray;
+}
+
+#catchphrase{
+    background-color: rgba(0, 0, 0, 0.685);
+    top: 30px;
+    bottom: auto;
+
+}
+
+.card {display:inline-block;}
+
