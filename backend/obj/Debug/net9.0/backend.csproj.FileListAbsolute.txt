@@ -44,3 +44,4 @@ C:\Users\admin\Documents\Desktop\TheVintageKit\backend\obj\Debug\net9.0\refint\b
 C:\Users\admin\Documents\Desktop\TheVintageKit\backend\obj\Debug\net9.0\backend.pdb
 C:\Users\admin\Documents\Desktop\TheVintageKit\backend\obj\Debug\net9.0\backend.genruntimeconfig.cache
 C:\Users\admin\Documents\Desktop\TheVintageKit\backend\obj\Debug\net9.0\ref\backend.dll
+C:\Users\admin\Documents\Desktop\TheVintageKit\backend\obj\Debug\net9.0\backend.sourcelink.json

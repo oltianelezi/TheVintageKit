@@ -9,18 +9,23 @@ namespace backend.Controllers
     {
         private readonly ProductRepository _productRepository;
 
-        // Inject repository through constructor
         public ProductController(ProductRepository productRepository)
         {
             _productRepository = productRepository;
         }
 
-        // GET: /product
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
             var products = await _productRepository.GetProducts();
-            System.Console.WriteLine(products);
+            return Ok(products);
+        }
+
+
+        [HttpGet("league/{League}")]
+        public async Task<IActionResult> GetProductByLeague(string League)
+        {
+            var products = await _productRepository.GetProductsByLeague(League);
             return Ok(products);
         }
     }
