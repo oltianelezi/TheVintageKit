@@ -44,7 +44,7 @@ namespace backend.Repositories
         }
 
 
-        public async Task<List<Product>> GetProductsByLeague(string League)
+        public async Task<List<Product>>? GetProductsByLeague(string League)
         {
             var Products = new List<Product>();
 
@@ -75,6 +75,37 @@ namespace backend.Repositories
             }
 
             return Products;
+        }
+
+        public async Task<Product> GetProductById(int id)
+        {
+            await using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            await using var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT productid, productname, price, category, league, description, imageurl 
+                FROM Products 
+                WHERE productid = @id";
+
+            command.Parameters.AddWithValue("@id", id);
+
+            await using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                return new Product
+                {
+                    ProductID = reader.GetInt32(0),
+                    ProductName = reader.GetString(1),
+                    Price = reader.GetFloat(2),
+                    Category = reader.GetString(3),
+                    League = reader.GetString(4),
+                    Description = reader.GetString(5),
+                    ImageURL = reader.GetString(6),
+                };
+            }
+
+            return null;
         }
     }
 }

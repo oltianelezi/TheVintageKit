@@ -6,17 +6,12 @@
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-
-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3Ah
-iU"
+      integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
       crossorigin="anonymous"
     />
     <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.j
-s"
-      integrity="sha384-
-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ
-"
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
       crossorigin="anonymous"
     ></script>
     <link
@@ -31,18 +26,77 @@ s"
     <title>The Vintage Kits - Cart</title>
     <script src="jquery-3.6.1.js"></script>
     <script>
-      $(document).ready(function () {
-        $("#search").on("keyup", function () {
-          var value = $(this).val().toLowerCase();
-          $("#productSection .card-body").filter(function () {
-            $(this)
-              .parent()
-              .toggle($(this).text().toLowerCase().indexOf(value) > -1);
-          });
-        });
+      // Get the cart from localStorage
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-        $("#searchButton").click(function () {
-          $("#searchBar").slideToggle();
+      $(document).ready(function () {
+        const productTable = $(".productTable"); // the table container
+
+        if (cart.length === 0) {
+          // If cart is empty, replace the table with an alert
+          productTable.html(`
+        <div class="container mt-3">
+          <div class="alert alert-danger">
+            There is nothing in your cart
+          </div>
+        </div>
+      `);
+        } else {
+          // Populate table dynamically if you want
+          cart.forEach(async (item) => {
+            console.log(item);
+            
+            const id = item.productId
+            const response = await fetch(`http://localhost:5134/product/${id}`);
+            const product = await response.json();
+            console.log(id);
+
+            productTable.find("tbody").append(`
+          <tr>
+            <td>
+              <button type="button" class="btn btn-dark removeItem" data-id="${id}">
+                <i class="bi-x-lg"></i>
+              </button>
+              <img src="${product.imageURL}" style="height: 100px; margin-left: 50px" />
+              ${product.productName}
+            </td>
+            <td>
+              <select class="form-select bg-dark text-white mt-4">
+                <option selected>S</option>
+                <option>M</option>
+                <option>L</option>
+                <option>XL</option>
+              </select>
+            </td>
+            <td>
+              <input type="number" class="form-control bg-dark text-white mt-4 w-25" value="${item.quantity}" />
+            </td>
+            <td><p class="mt-4">$${product.price}</p></td>
+          </tr>
+        `);
+          });
+        }
+
+        // Remove item handler
+        $(document).on("click", ".removeItem", function () {
+          const productId = $(this).data("id");
+          console.log(productId);
+          
+          cart = cart.filter((item) => item.productId !== productId);
+
+          $(this).closest("tr").remove();
+          localStorage.setItem("cart", JSON.stringify(cart));
+
+          if (cart.length === 0) {
+            // If cart is empty, replace the table with an alert
+            productTable.html(`
+        <div class="container mt-3">
+          <div class="alert alert-danger">
+            There is nothing in your cart
+          </div>
+        </div>
+      `);
+          }
         });
       });
     </script>
@@ -152,42 +206,30 @@ s"
       </nav>
     </div>
 
-    <!--Search section-->
-    <div
-      class="input-group"
-      id="searchBar"
-      style="
-        display: none;
-        position: fixed;
-        z-index: 1;
-        border: 2px solid black;
-        top: 120px;
-      "
-    >
-      <span class="input-group-text" id="basic-addon1"
-        ><i class="bi-search"></i
-      ></span>
-      <input
-        type="text"
-        id="search"
-        class="form-control"
-        placeholder="Enter your search..."
-        aria-label="Search"
-        aria-describedby="basic-addon1"
-      />
-    </div>
-
     <!--Product section-->
-    <div class="container" id="productSection" style="margin-top: 150px">
-      <div class="row"></div>
-    </div>
-
-    <div class="container mt-3">
-      <div class="alert alert-danger">There is nothing in your cart</div>
+    <div class="container productTable" style="margin-top: 150px">
+      <table class="table table-lg table-hover table-striped">
+        <thead>
+          <tr>
+            <th><center>Product</center></th>
+            <th>Size</th>
+            <th>Quantity</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <center>
+        <a href="checkout.html"
+          ><button type="submit" class="btn btn-dark btn-lg mb-3">
+            Checkout
+          </button></a
+        >
+      </center>
     </div>
 
     <!--FOOTER-->
-    <footer class="text-center text-sm-start text-white bg-dark">
+    <footer class="text-center mt-4 text-sm-start text-white bg-dark">
       <section class="bg-dark p-1">
         <div class="container text-center text-md-start mt-2">
           <div class="row mt-3">
@@ -261,7 +303,10 @@ s"
             </div>
 
             <div class="col-md-3 col-lg-2 col-xl-2 me-5 mb-4">
-              <img src="https://qayqamfmsnxtnpwjltbe.supabase.co/storage/v1/object/public/TheVintageKit/logo%20png.png" height="200px" />
+              <img
+                src="https://qayqamfmsnxtnpwjltbe.supabase.co/storage/v1/object/public/TheVintageKit/logo%20png.png"
+                height="200px"
+              />
             </div>
           </div>
         </div>
