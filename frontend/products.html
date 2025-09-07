@@ -19,7 +19,10 @@ s"
 "
       crossorigin="anonymous"
     ></script>
-    <link rel="icon" href="logo.ico" />
+    <link
+      rel="icon"
+      href="https://qayqamfmsnxtnpwjltbe.supabase.co/storage/v1/object/public/TheVintageKit/logo.ico"
+    />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css"
@@ -106,7 +109,9 @@ s"
       <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
         <div class="container-fluid">
           <a class="navbar-brand" href="homepage.html"
-            ><img src="logo png.png" width="90px"
+            ><img
+              src="https://qayqamfmsnxtnpwjltbe.supabase.co/storage/v1/object/public/TheVintageKit/logo%20png.png"
+              width="90px"
           /></a>
           <button
             class="navbar-toggler"
@@ -123,7 +128,7 @@ s"
               </li>
 
               <li class="nav-item">
-                <a class="nav-link ms-3" href="products.html">Products</a>
+                <a class="nav-link ms-3" href="products.html?league=">Products</a>
               </li>
 
               <li class="nav-item dropdown">
@@ -136,16 +141,16 @@ s"
                 >
                 <ul class="dropdown-menu">
                   <li>
-                    <a href="PL.html" class="dropdown-item">Premier League</a>
+                    <a href="products.html?league=Premier%20League" class="dropdown-item">Premier League</a>
                   </li>
                   <li>
-                    <a href="serieA.html" class="dropdown-item">Serie A</a>
+                    <a href="products.html?league=Serie%20A" class="dropdown-item">Serie A</a>
                   </li>
                   <li>
-                    <a href="laliga.html" class="dropdown-item">La Liga</a>
+                    <a href="products.html?league=La%20Liga" class="dropdown-item">La Liga</a>
                   </li>
                   <li>
-                    <a href="Bundesliga.html" class="dropdown-item"
+                    <a href="products.html?league=Bundesliga" class="dropdown-item"
                       >Bundesliga</a
                     >
                   </li>
@@ -153,7 +158,7 @@ s"
               </li>
 
               <li class="nav-item">
-                <a class="nav-link ms-3" href="national-teams.html"
+                <a class="nav-link ms-3" href="products.html?league=National%20Team"
                   >National Teams</a
                 >
               </li>
@@ -216,8 +221,11 @@ s"
 
     <script>
       $(document).ready(function () {
+        const params = new URLSearchParams(window.location.search);
+        const league = params.get("league");
         // Fetch products
-        fetch("http://localhost:5134/product")
+        const apiEndpoint = league ? `http://localhost:5134/product/league/${league}` : "http://localhost:5134/product";
+        fetch(apiEndpoint)
           .then((response) => response.json()) // parse JSON once
           .then((products) => {
             console.log(products); // now you have the array
@@ -365,7 +373,7 @@ s"
             </div>
 
             <div class="col-md-3 col-lg-2 col-xl-2 me-5 mb-4">
-              <img src="logo png.png" height="200px" />
+              <img src="https://qayqamfmsnxtnpwjltbe.supabase.co/storage/v1/object/public/TheVintageKit/logo%20png.png" height="200px" />
             </div>
           </div>
         </div>

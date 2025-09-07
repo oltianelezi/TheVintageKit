@@ -2,6 +2,8 @@ using backend.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = builder.Configuration.GetConnectionString("SupabaseDb");
+
 builder.Services.AddControllers();
 
 // Register repository with dependency injection
