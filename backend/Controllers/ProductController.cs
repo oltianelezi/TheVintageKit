@@ -28,5 +28,16 @@ namespace backend.Controllers
             var products = await _productRepository.GetProductsByLeague(League);
             return Ok(products);
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProductById(int id)
+        {
+            var product = await _productRepository.GetProductById(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
     }
 }

@@ -10,5 +10,5 @@ public class Product
     public string League { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string ImageURL { get; set; } = string.Empty;
-    public double Price { get; set; }
+    public decimal Price { get; set; }
 }

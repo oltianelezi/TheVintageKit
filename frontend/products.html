@@ -6,17 +6,12 @@
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-
-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3Ah
-iU"
+      integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
       crossorigin="anonymous"
     />
     <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.j
-s"
-      integrity="sha384-
-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ
-"
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
       crossorigin="anonymous"
     ></script>
     <link
@@ -32,6 +27,9 @@ s"
     <script src="jquery-3.6.1.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
+      // Load cart or start empty
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
       $(document).ready(function () {
         $("#search").on("keyup", function () {
           var value = $(this).val().toLowerCase();
@@ -45,12 +43,39 @@ s"
         $("#searchButton").click(function () {
           $("#searchBar").slideToggle();
         });
+
+        iconUpdates();
       });
 
-      $(document).ready(function () {
-        $(document).on("click", "#addToCart", function () {
-          $("#cartAlert").slideDown();
-        });
+      function iconUpdates() {
+        cartIconUpdate();
+      }
+
+      function cartIconUpdate() {
+        if (cart.length === 0) {
+          $(".cartSymbol").replaceWith(
+            `<div class="cartSymbol"><i class="bi-cart"></i></div>`
+          );
+        } else {
+          $(".cartSymbol").replaceWith(
+            `<div class="cartSymbol"><i class="bi-cart-fill"></i></div>`
+          );
+        }
+      }
+
+      // Add item to cart
+      function addToCart(productId) {
+        const product = cart.find((item) => item.productId === productId);
+
+        cart.push({ productId, quantity: 1 , size: "M"});
+        localStorage.setItem("cart", JSON.stringify(cart));
+        iconUpdates();
+      }
+
+      $(document).on("click", ".addToCart", function () {
+        const productId = $(this).data("id");
+        addToCart(productId);
+        $("#cartAlert").slideDown();
 
         $(document).on("click", "#alertRemove", function () {
           $("#cartAlert").slideUp();
@@ -128,7 +153,9 @@ s"
               </li>
 
               <li class="nav-item">
-                <a class="nav-link ms-3" href="products.html?league=">Products</a>
+                <a class="nav-link ms-3" href="products.html?league="
+                  >Products</a
+                >
               </li>
 
               <li class="nav-item dropdown">
@@ -141,16 +168,30 @@ s"
                 >
                 <ul class="dropdown-menu">
                   <li>
-                    <a href="products.html?league=Premier%20League" class="dropdown-item">Premier League</a>
+                    <a
+                      href="products.html?league=Premier%20League"
+                      class="dropdown-item"
+                      >Premier League</a
+                    >
                   </li>
                   <li>
-                    <a href="products.html?league=Serie%20A" class="dropdown-item">Serie A</a>
+                    <a
+                      href="products.html?league=Serie%20A"
+                      class="dropdown-item"
+                      >Serie A</a
+                    >
                   </li>
                   <li>
-                    <a href="products.html?league=La%20Liga" class="dropdown-item">La Liga</a>
+                    <a
+                      href="products.html?league=La%20Liga"
+                      class="dropdown-item"
+                      >La Liga</a
+                    >
                   </li>
                   <li>
-                    <a href="products.html?league=Bundesliga" class="dropdown-item"
+                    <a
+                      href="products.html?league=Bundesliga"
+                      class="dropdown-item"
                       >Bundesliga</a
                     >
                   </li>
@@ -158,7 +199,9 @@ s"
               </li>
 
               <li class="nav-item">
-                <a class="nav-link ms-3" href="products.html?league=National%20Team"
+                <a
+                  class="nav-link ms-3"
+                  href="products.html?league=National%20Team"
                   >National Teams</a
                 >
               </li>
@@ -173,14 +216,15 @@ s"
               >
                 <i class="bi-search"></i>
               </button>
-              <a href="cart-filled.html"
+              <a href="cart.html"
                 ><button
                   type="button"
                   class="btn text-white"
                   style="font-size: 25px"
                 >
-                  <i class="bi-cart-fill"></i></button
-              ></a>
+                  <div class="cartSymbol"></div>
+                </button>
+              </a>
             </form>
           </div>
         </div>
@@ -224,7 +268,9 @@ s"
         const params = new URLSearchParams(window.location.search);
         const league = params.get("league");
         // Fetch products
-        const apiEndpoint = league ? `http://localhost:5134/product/league/${league}` : "http://localhost:5134/product";
+        const apiEndpoint = league
+          ? `http://localhost:5134/product/league/${league}`
+          : "http://localhost:5134/product";
         fetch(apiEndpoint)
           .then((response) => response.json()) // parse JSON once
           .then((products) => {
@@ -243,7 +289,7 @@ s"
                             <div class="card-body">
                                 <h5 class="card-title">${product.productName}</h5>
                                 <p class="card-text">$${priceFormatted}</p>
-                                <button class="btn btn-dark text-white addToCart">
+                                <button class="btn btn-dark text-white addToCart" data-id="${product.productID}">
                                     Add to cart <i class="bi-cart"></i>
                                 </button>
                             </div>
@@ -258,22 +304,10 @@ s"
           });
 
         // Add-to-cart alert
-        $(document).on("click", ".addToCart", function () {
-          $("#cartAlert").slideDown();
-        });
 
         $("#alertRemove").click(function () {
           $("#cartAlert").slideUp();
         });
-      });
-
-      // Add to cart alert
-      $(document).on("click", ".addToCart", function () {
-        $("#cartAlert").slideDown();
-      });
-
-      $("#alertRemove").click(function () {
-        $("#cartAlert").slideUp();
       });
     </script>
 
@@ -373,7 +407,10 @@ s"
             </div>
 
             <div class="col-md-3 col-lg-2 col-xl-2 me-5 mb-4">
-              <img src="https://qayqamfmsnxtnpwjltbe.supabase.co/storage/v1/object/public/TheVintageKit/logo%20png.png" height="200px" />
+              <img
+                src="https://qayqamfmsnxtnpwjltbe.supabase.co/storage/v1/object/public/TheVintageKit/logo%20png.png"
+                height="200px"
+              />
             </div>
           </div>
         </div>

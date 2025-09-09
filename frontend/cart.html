@@ -6,17 +6,12 @@
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-
-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3Ah
-iU"
+      integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
       crossorigin="anonymous"
     />
     <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.j
-s"
-      integrity="sha384-
-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ
-"
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
       crossorigin="anonymous"
     ></script>
     <link
@@ -31,20 +26,152 @@ s"
     <title>The Vintage Kits - Cart</title>
     <script src="jquery-3.6.1.js"></script>
     <script>
-      $(document).ready(function () {
-        $("#search").on("keyup", function () {
-          var value = $(this).val().toLowerCase();
-          $("#productSection .card-body").filter(function () {
-            $(this)
-              .parent()
-              .toggle($(this).text().toLowerCase().indexOf(value) > -1);
-          });
+      // Get the cart from localStorage
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      let products;
+
+      async function loadProducts() {
+        products = await Promise.all(
+          cart.map((item) =>
+            fetch(`http://localhost:5134/product/${item.productId}`).then(
+              (res) => res.json()
+            )
+          )
+        );
+      }
+
+      $(document).ready(async function () {
+        await loadProducts();
+        renders();
+        // Get all product info and map them to correct cart index to preserve order
+        // Handle size changes
+        $(document).on("change", ".sizeSelect", function () {
+          const index = $(this).data("id");
+          const newSize = $(this).val();
+
+          cart[index].size = newSize;
+          localStorage.setItem("cart", JSON.stringify(cart));
         });
 
-        $("#searchButton").click(function () {
-          $("#searchBar").slideToggle();
+        // Handle quantity changes
+        $(document).on("input", ".quantityInput", function () {
+          const index = $(this).data("id");
+          const newQuantity = parseInt($(this).val(), 10);
+
+          if (!isNaN(newQuantity) && newQuantity > 0) {
+            cart[index].quantity = newQuantity;
+            localStorage.setItem("cart", JSON.stringify(cart));
+            renders();
+          }
         });
       });
+
+      // Render changing DOM elements
+      function renders() {
+        renderCartIcon();
+        renderTable();
+      }
+
+      // Renders the cart table + total price row
+      async function renderTable() {
+        const productTable = $(".productTable"); // the table container
+        productTable.find("tbody").empty();
+
+        let totPrice = 0;
+
+        if (cart.length === 0) {
+          // If cart is empty, replace the table with an alert
+          productTable.html(`
+                    <div class="container mt-3">
+                      <div class="alert alert-danger">
+                        There is nothing in your cart
+                      </div>
+                    </div>
+                  `);
+        } else {
+          console.log(products);
+
+          products.forEach((product, index) => {
+            const item = cart[index];
+            totPrice += product.price * item.quantity;
+            totPrice = Math.round(totPrice * 100) / 100;
+            console.log(item);
+
+            productTable.find("tbody").append(`
+                      <tr>
+                        <td>
+                          <button type="button" class="btn btn-dark removeItem" data-id="${index}" data-price="${
+              product.price
+            }">
+                            <i class="bi-x-lg"></i>
+                          </button>
+                          <img src="${
+                            product.imageURL
+                          }" style="height: 100px; margin-left: 50px" />
+                          ${product.productName}
+                        </td>
+                        <td>
+                          <select class="form-select bg-dark text-white mt-4 sizeSelect" data-id="${index}">
+                            <option value="S" ${
+                              item.size === "S" ? "selected" : ""
+                            }>S</option>
+                            <option value="M" ${
+                              item.size === "M" ? "selected" : ""
+                            }>M</option>
+                            <option value="L" ${
+                              item.size === "L" ? "selected" : ""
+                            }>L</option>
+                            <option value="XL" ${
+                              item.size === "XL" ? "selected" : ""
+                            }>XL</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input type="number" class="form-control bg-dark text-white mt-4 w-25 quantityInput"
+                          value="${item.quantity}" data-id="${index}"/>
+                        </td>
+                        <td><p class="mt-4">$${product.price}</p></td>
+                      </tr>
+                    `);
+          });
+
+          // Total price row
+          productTable.find("tbody").append(`
+                  <tr class="totalRow">
+                    <td colspan="3" class="text-end fw-bold">Total:</td>
+                    <td class="fw-bold">$${totPrice}</td>
+                  </tr>
+                `);
+        }
+
+        console.log(totPrice);
+      }
+
+      // Remove item handler
+      $(document).on("click", ".removeItem", function () {
+        const removeIndex = $(this).data("id");
+
+        cart.splice(removeIndex, 1);
+        products.splice(removeIndex, 1);
+        console.log(removeIndex);
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+
+        renders();
+      });
+
+      // Renders the cart icon filled or empty
+      function renderCartIcon() {
+        if (cart.length === 0) {
+          $(".cartSymbol").replaceWith(
+            `<div class="cartSymbol"><i class="bi-cart"></i></div>`
+          );
+        } else {
+          $(".cartSymbol").replaceWith(
+            `<div class="cartSymbol"><i class="bi-cart-fill"></i></div>`
+          );
+        }
+      }
     </script>
   </head>
   <body>
@@ -138,56 +265,45 @@ s"
               >
                 <i class="bi-search"></i>
               </button>
-              <a href="cart-filled.html"
+              <a href="cart.html"
                 ><button
                   type="button"
                   class="btn text-white"
                   style="font-size: 25px"
                 >
-                  <i class="bi-cart-fill"></i></button
-              ></a>
+                  <div class="cartSymbol"></div>
+                </button>
+              </a>
             </form>
           </div>
         </div>
       </nav>
     </div>
 
-    <!--Search section-->
-    <div
-      class="input-group"
-      id="searchBar"
-      style="
-        display: none;
-        position: fixed;
-        z-index: 1;
-        border: 2px solid black;
-        top: 120px;
-      "
-    >
-      <span class="input-group-text" id="basic-addon1"
-        ><i class="bi-search"></i
-      ></span>
-      <input
-        type="text"
-        id="search"
-        class="form-control"
-        placeholder="Enter your search..."
-        aria-label="Search"
-        aria-describedby="basic-addon1"
-      />
-    </div>
-
     <!--Product section-->
-    <div class="container" id="productSection" style="margin-top: 150px">
-      <div class="row"></div>
-    </div>
-
-    <div class="container mt-3">
-      <div class="alert alert-danger">There is nothing in your cart</div>
+    <div class="container productTable" style="margin-top: 150px">
+      <table class="table table-lg table-hover table-striped">
+        <thead>
+          <tr>
+            <th><center>Product</center></th>
+            <th>Size</th>
+            <th>Quantity</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <center>
+        <a href="checkout.html"
+          ><button type="submit" class="btn btn-dark btn-lg mb-3">
+            Checkout
+          </button></a
+        >
+      </center>
     </div>
 
     <!--FOOTER-->
-    <footer class="text-center text-sm-start text-white bg-dark">
+    <footer class="text-center mt-4 text-sm-start text-white bg-dark">
       <section class="bg-dark p-1">
         <div class="container text-center text-md-start mt-2">
           <div class="row mt-3">
@@ -261,7 +377,10 @@ s"
             </div>
 
             <div class="col-md-3 col-lg-2 col-xl-2 me-5 mb-4">
-              <img src="https://qayqamfmsnxtnpwjltbe.supabase.co/storage/v1/object/public/TheVintageKit/logo%20png.png" height="200px" />
+              <img
+                src="https://qayqamfmsnxtnpwjltbe.supabase.co/storage/v1/object/public/TheVintageKit/logo%20png.png"
+                height="200px"
+              />
             </div>
           </div>
         </div>
