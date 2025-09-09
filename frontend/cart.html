@@ -144,7 +144,6 @@
         cart.splice(removeIndex, 1);
         console.log(removeIndex);
 
-        $(this).closest("tr").remove();
         localStorage.setItem("cart", JSON.stringify(cart));
 
         renders();
