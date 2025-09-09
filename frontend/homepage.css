@@ -9,5 +9,10 @@ body {
 
 }
 
+.carousel-control-prev,
+.carousel-control-next {
+  z-index: 0; /* lower than navbar */
+}
+
 .card {display:inline-block;}
 
