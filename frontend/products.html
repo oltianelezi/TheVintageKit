@@ -31,6 +31,8 @@
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
       $(document).ready(function () {
+        renders();
+
         $("#search").on("keyup", function () {
           var value = $(this).val().toLowerCase();
           $("#productSection .card-body").filter(function () {
@@ -43,15 +45,13 @@
         $("#searchButton").click(function () {
           $("#searchBar").slideToggle();
         });
-
-        iconUpdates();
       });
 
-      function iconUpdates() {
-        cartIconUpdate();
+      function renders() {
+        renderCartIcon();
       }
 
-      function cartIconUpdate() {
+      function renderCartIcon() {
         if (cart.length === 0) {
           $(".cartSymbol").replaceWith(
             `<div class="cartSymbol"><i class="bi-cart"></i></div>`
@@ -67,9 +67,9 @@
       function addToCart(productId) {
         const product = cart.find((item) => item.productId === productId);
 
-        cart.push({ productId, quantity: 1 , size: "M"});
+        cart.push({ productId, quantity: 1, size: "M" });
         localStorage.setItem("cart", JSON.stringify(cart));
-        iconUpdates();
+        renders();
       }
 
       $(document).on("click", ".addToCart", function () {
@@ -302,12 +302,6 @@
           .catch((error) => {
             console.error("Error fetching products:", error);
           });
-
-        // Add-to-cart alert
-
-        $("#alertRemove").click(function () {
-          $("#cartAlert").slideUp();
-        });
       });
     </script>
 
