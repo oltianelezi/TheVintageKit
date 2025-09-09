@@ -47,15 +47,19 @@
         iconUpdates();
       });
 
-      function iconUpdates(){
+      function iconUpdates() {
         cartIconUpdate();
       }
 
       function cartIconUpdate() {
         if (cart.length === 0) {
-          $(".cartSymbol").replaceWith(`<div class="cartSymbol"><i class="bi-cart"></i></div>`);
+          $(".cartSymbol").replaceWith(
+            `<div class="cartSymbol"><i class="bi-cart"></i></div>`
+          );
         } else {
-          $(".cartSymbol").replaceWith(`<div class="cartSymbol"><i class="bi-cart-fill"></i></div>`);
+          $(".cartSymbol").replaceWith(
+            `<div class="cartSymbol"><i class="bi-cart-fill"></i></div>`
+          );
         }
       }
 
@@ -63,7 +67,7 @@
       function addToCart(productId) {
         const product = cart.find((item) => item.productId === productId);
 
-        cart.push({ productId, quantity: 1 });
+        cart.push({ productId, quantity: 1 , size: "M"});
         localStorage.setItem("cart", JSON.stringify(cart));
         iconUpdates();
       }
@@ -218,8 +222,9 @@
                   class="btn text-white"
                   style="font-size: 25px"
                 >
-                  <div class="cartSymbol"></div></button
-              ></a>
+                  <div class="cartSymbol"></div>
+                </button>
+              </a>
             </form>
           </div>
         </div>

@@ -32,7 +32,7 @@ namespace backend.Repositories
                 {
                     ProductID = reader.GetInt32(0),
                     ProductName = reader.GetString(1),
-                    Price = reader.GetFloat(2),
+                    Price = reader.GetDecimal(2),
                     Category = reader.GetString(3),
                     League = reader.GetString(4),
                     Description = reader.GetString(5),
@@ -66,7 +66,7 @@ namespace backend.Repositories
                 {
                     ProductID = reader.GetInt32(0),
                     ProductName = reader.GetString(1),
-                    Price = reader.GetFloat(2),
+                    Price = reader.GetDecimal(2),
                     Category = reader.GetString(3),
                     League = reader.GetString(4),
                     Description = reader.GetString(5),
@@ -97,7 +97,7 @@ namespace backend.Repositories
                 {
                     ProductID = reader.GetInt32(0),
                     ProductName = reader.GetString(1),
-                    Price = reader.GetFloat(2),
+                    Price = reader.GetDecimal(2),
                     Category = reader.GetString(3),
                     League = reader.GetString(4),
                     Description = reader.GetString(5),
