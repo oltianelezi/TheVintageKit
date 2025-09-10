@@ -34,14 +34,14 @@
       });
 
       function loadProducts(products, destination) {
-         for (const id of products) {
-            fetch(`http://localhost:5134/product/${id}`)
-              .then((response) => response.json()) // parse JSON once
-              .then((product) => {
-                console.log(product);
-                const priceFormatted = product.price.toFixed(2); // 2 decimals
+        for (const id of products) {
+          fetch(`http://localhost:5134/product/${id}`)
+            .then((response) => response.json()) // parse JSON once
+            .then((product) => {
+              console.log(product);
+              const priceFormatted = product.price.toFixed(2); // 2 decimals
 
-                const card = `
+              const card = `
                     <div class="col">
                         <div class="card m-3" style="width: 18rem; height: 29rem;">
                             <img src="${product.imageURL}" class="card-img-top" alt="${product.productName}">
@@ -55,12 +55,12 @@
                         </div>
                     </div>
                 `;
-                $(destination).append(card);
-              })
-              .catch((error) => {
-                console.error("Error fetching products:", error);
-              });
-          }
+              $(destination).append(card);
+            })
+            .catch((error) => {
+              console.error("Error fetching products:", error);
+            });
+        }
       }
 
       function renders() {
@@ -233,16 +233,16 @@
       <p class="text-center text-white display-5"><b>BEST SELLERS</b></p>
       <!--Best Sellers section begins-->
       <div class="container" id="productSection">
-          <div class="row" id="bestSellersRow">
-            <!-- Product cards will be injected here -->
-          </div>
+        <div class="row" id="bestSellersRow">
+          <!-- Product cards will be injected here -->
+        </div>
       </div>
 
       <script>
         $(document).ready(function () {
           const bestSellers = [2, 3, 8];
 
-          loadProducts(bestSellers, "#bestSellersRow")
+          loadProducts(bestSellers, "#bestSellersRow");
         });
       </script>
     </div>
@@ -259,19 +259,19 @@
       <p class="text-center text-white display-5"><b>WORLD CUP CLASSICS</b></p>
 
       <div class="container" id="productSection">
-          <div class="row" id="worldCupClassicsRow">
-            <!-- Product cards will be injected here -->
-          </div>
+        <div class="row" id="worldCupClassicsRow">
+          <!-- Product cards will be injected here -->
+        </div>
       </div>
 
       <script>
         $(document).ready(function () {
           const worldCupClassics = [5, 6, 4];
-          loadProducts(worldCupClassics, "#worldCupClassicsRow")
+          loadProducts(worldCupClassics, "#worldCupClassicsRow");
         });
       </script>
     </div>
-
+    <!--World Cup Classics ends -->
     <div class="container mt-3 p-3">
       <hr
         class="mb-4 mt-0 d-inline-block mx-auto"
