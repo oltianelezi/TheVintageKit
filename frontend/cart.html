@@ -173,12 +173,13 @@
         let order = [];
         for (let i = 0; i < cart.length; i++) {
           order.push({
-            productId: products[i].productId,
+            productId: products[i].productID,
             size: cart[i].size,
             quantity: cart[i].quantity,
             unitPrice: products[i].price * cart[i].quantity,
           });
         }
+        
 
         let checkoutPrice = 0;
         for (let i = 0; i < cart.length; i++) {

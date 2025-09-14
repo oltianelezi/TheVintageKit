@@ -1,3 +1,4 @@
+using backend.DAOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,15 +9,12 @@ namespace backend.Controllers
     public class OrderController : ControllerBase
     {
 
-        public class PaymentRequest
-        {
-            public decimal paymentAmount { get; set; }
-        }
 
         [HttpPost]
-        public async Task<IActionResult> paymentCheck([FromBody] PaymentRequest request)
+        public async Task<IActionResult> NewOrder([FromBody] OrderRequest request)
         {
-            System.Console.WriteLine(request.paymentAmount);
+            
+
             return Ok();
         }
     }

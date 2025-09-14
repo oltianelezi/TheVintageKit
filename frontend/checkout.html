@@ -134,7 +134,11 @@
                 const payload = {
                   paymentAmount: checkoutReceipt.checkoutPrice,
                   address,
+                  order: checkoutReceipt.order,
+                  email: details.payer.email_address
                 };
+                console.log(payload);
+                
                 alert("Payment completed by " + details.payer.name.given_name);
 
                 fetch("http://localhost:5134/order", {
