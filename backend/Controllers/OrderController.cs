@@ -8,10 +8,15 @@ namespace backend.Controllers
     public class OrderController : ControllerBase
     {
 
-        [HttpPost]
-        public async Task<IActionResult> paymentCheck([FromBody] int paymentAmount)
+        public class PaymentRequest
         {
-            System.Console.WriteLine(paymentAmount);
+            public decimal paymentAmount { get; set; }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> paymentCheck([FromBody] PaymentRequest request)
+        {
+            System.Console.WriteLine(request.paymentAmount);
             return Ok();
         }
     }
