@@ -1,8 +1,5 @@
 using backend.Models;
 using Npgsql;
-using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace backend.Repositories
 {

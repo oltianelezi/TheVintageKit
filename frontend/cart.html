@@ -143,8 +143,6 @@
                   </tr>
                 `);
         }
-
-        console.log(totPrice);
       }
 
       // Remove item handler
@@ -153,8 +151,6 @@
 
         cart.splice(removeIndex, 1);
         products.splice(removeIndex, 1);
-        console.log(removeIndex);
-
         localStorage.setItem("cart", JSON.stringify(cart));
 
         renders();
@@ -172,6 +168,32 @@
           );
         }
       }
+
+      function handleCheckout() {
+        let order = [];
+        for (let i = 0; i < cart.length; i++) {
+          order.push({
+            productId: products[i].productID,
+            size: cart[i].size,
+            quantity: cart[i].quantity,
+            unitPrice: products[i].price * cart[i].quantity,
+          });
+        }
+        
+
+        let checkoutPrice = 0;
+        for (let i = 0; i < cart.length; i++) {
+          checkoutPrice += products[i].price * cart[i].quantity;
+        }
+
+        let checkoutReceipt = { order: order, checkoutPrice: checkoutPrice };
+        localStorage.setItem(
+          "checkoutReceipt",
+          JSON.stringify(checkoutReceipt)
+        );
+      }
+
+      $(document).on("click", ".checkoutBtn", handleCheckout);
     </script>
   </head>
   <body>
@@ -294,11 +316,11 @@
         <tbody></tbody>
       </table>
       <center>
-        <a href="checkout.html"
-          ><button type="submit" class="btn btn-dark btn-lg mb-3">
+        <a href="checkout.html">
+          <button type="submit" class="btn btn-dark btn-lg mb-3 checkoutBtn">
             Checkout
-          </button></a
-        >
+          </button>
+        </a>
       </center>
     </div>
 
