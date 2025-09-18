@@ -45,3 +45,6 @@ C:\Users\admin\Documents\Desktop\TheVintageKit\backend\obj\Debug\net9.0\backend.
 C:\Users\admin\Documents\Desktop\TheVintageKit\backend\obj\Debug\net9.0\backend.genruntimeconfig.cache
 C:\Users\admin\Documents\Desktop\TheVintageKit\backend\obj\Debug\net9.0\ref\backend.dll
 C:\Users\admin\Documents\Desktop\TheVintageKit\backend\obj\Debug\net9.0\backend.sourcelink.json
+C:\Users\admin\Documents\Desktop\TheVintageKit\backend\bin\Debug\net9.0\BouncyCastle.Cryptography.dll
+C:\Users\admin\Documents\Desktop\TheVintageKit\backend\bin\Debug\net9.0\MailKit.dll
+C:\Users\admin\Documents\Desktop\TheVintageKit\backend\bin\Debug\net9.0\MimeKit.dll

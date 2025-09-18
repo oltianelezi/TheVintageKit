@@ -1,4 +1,6 @@
+using backend.Models;
 using backend.Repositories;
+using backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,12 @@ builder.Services.AddControllers();
 
 // Register repository with dependency injection
 builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<OrderRepository>();
+builder.Services.AddScoped<AddressRepository>();
+builder.Services.AddScoped<OrderItemRepository>();
+builder.Services.AddScoped<EmailService>();
+
+
 
 // ---- ADD THIS: CORS POLICY ----
 builder.Services.AddCors(options =>
