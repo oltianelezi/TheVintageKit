@@ -33,6 +33,13 @@
         renders();
       });
 
+      $(document).on("click", ".productCard", goToProduct);
+
+      function goToProduct() {
+        const productId = $(this).data("id");
+        window.location.href = `single-product.html?productId=${productId}`;
+      }
+
       function loadProducts(products, destination) {
         for (const id of products) {
           fetch(`http://localhost:5134/product/${id}`)
@@ -42,8 +49,8 @@
               const priceFormatted = product.price.toFixed(2); // 2 decimals
 
               const card = `
-                    <div class="col">
-                        <div class="card m-3" style="width: 18rem; height: 29rem;">
+                    <div class="col" >
+                        <div class="card m-3 productCard" data-id="${product.productID}" style="width: 18rem; height: 29rem; cursor: pointer;">
                             <img src="${product.imageURL}" class="card-img-top" alt="${product.productName}">
                             <div class="card-body">
                                 <h5 class="card-title">${product.productName}</h5>
@@ -88,7 +95,9 @@
         renders();
       }
 
-      $(document).on("click", ".addToCart", function () {
+      $(document).on("click", ".addToCart", function (event) {
+        event.stopPropagation(); // This prevents the card click event from firing
+
         const productId = $(this).data("id");
         addToCart(productId);
         $("#cartAlert").slideDown();
