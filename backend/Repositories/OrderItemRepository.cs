@@ -14,19 +14,19 @@ public class OrderItemRepository
         _connectionString = config.GetConnectionString("SupabaseDb");
     }
 
-    public async Task NewOrderItems(List<OrderItem> Order)
+    public async Task NewOrderItems(List<OrderItem> orderItems)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        foreach (OrderItem item in Order)
-        {
-            await using var command = connection.CreateCommand();
+        await using var transaction = await connection.BeginTransactionAsync();
 
-            command.CommandText = @"
+        foreach (var item in orderItems)
+        {
+            await using var command = new NpgsqlCommand(@"
             INSERT INTO orderitem (productid, orderid, quantity, size, unitprice)
-            VALUES (@productid, @orderid, @quantity, @size, @unitprice) 
-            ";
+            VALUES (@productid, @orderid, @quantity, @size, @unitprice);
+        ", connection, transaction);
 
             command.Parameters.AddWithValue("@productid", item.ProductId);
             command.Parameters.AddWithValue("@orderid", item.OrderId);
@@ -36,5 +36,8 @@ public class OrderItemRepository
 
             await command.ExecuteNonQueryAsync();
         }
+
+        await transaction.CommitAsync();
     }
+
 }
