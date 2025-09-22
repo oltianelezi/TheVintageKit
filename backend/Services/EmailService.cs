@@ -24,7 +24,7 @@ namespace backend.Services
         public async Task SendEmailAsync(string toEmail, string subject, string body)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("My Store", _smtpUser));
+            message.From.Add(new MailboxAddress("TheVintageKit", _smtpUser));
             message.To.Add(MailboxAddress.Parse(toEmail));
             message.Subject = subject;
             message.Body = new TextPart("plain") { Text = body };
