@@ -31,230 +31,316 @@
         background-color: darkslategray;
       }
     </style>
+
+    <script>
+      function cartIconRender() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        if (cart.length === 0) {
+          $(".cartSymbol").replaceWith(
+            `<div class="cartSymbol"><i class="bi-cart"></i></div>`
+          );
+        } else {
+          $(".cartSymbol").replaceWith(
+            `<div class="cartSymbol"><i class="bi-cart-fill"></i></div>`
+          );
+        }
+      }
+
+      $(document).ready(function () {
+        cartIconRender();
+      });
+
+      async function submitMessage() {
+        const payload = {
+          name: $("#name").val(),
+          email: $("#email").val(),
+          comment: $("#comment").val(),
+        };
+
+        const response = await fetch(
+          "http://localhost:5134/message/sendMessage",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          }
+        );
+
+        if (response.ok) {
+          $("#confirmationAlert").slideDown();
+
+          $(document).on("click", "#alertRemove", function () {
+            $("#confirmationAlert").slideUp();
+            window.location.replace("homepage.html");
+          });
+        }
+      }
+
+      $(document).on("click", "#submitBtn", function (e) {
+        e.preventDefault();
+        submitMessage();
+      });
+    </script>
   </head>
 
-  <!--Navbar section-->
-
-  <div
-    class="container-fluid bg-dark"
-    style="font-size: 20px; position: fixed; top: 0px; z-index: 1"
-  >
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="homepage.html"
-          ><img
-            src="https://qayqamfmsnxtnpwjltbe.supabase.co/storage/v1/object/public/TheVintageKit/logo%20png.png"
-            width="90px"
-        /></a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#myNavbar"
+  <body>
+    <!-- Confirmation Alert-->
+    <div class="container mt-3 d-flex justify-content-center">
+      <div
+        class="alert alert-success"
+        id="confirmationAlert"
+        style="position: fixed; top: 150px; z-index: 2; display: none"
+      >
+        <strong
+          >Message sent! We will respond at the earliest possible
+          opportunity.</strong
         >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="myNavbar">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-              <a class="nav-link ms-3" href="homepage.html">Home</a>
-            </li>
+        <button class="btn btn-success" id="alertRemove">Accept</button>
+      </div>
+    </div>
 
-            <li class="nav-item">
-              <a class="nav-link ms-3" href="products.html?league=">Products</a>
-            </li>
+    <!--Navbar section-->
 
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle ms-3"
-                role="button"
-                data-bs-toggle="dropdown"
-                >Clubs</a
-              >
-              <ul class="dropdown-menu">
-                <li>
-                  <a
-                    href="products.html?league=Premier%20League"
-                    class="dropdown-item"
-                    >Premier League</a
-                  >
-                </li>
-                <li>
-                  <a href="products.html?league=Serie%20A" class="dropdown-item"
-                    >Serie A</a
-                  >
-                </li>
-                <li>
-                  <a href="products.html?league=La%20Liga" class="dropdown-item"
-                    >La Liga</a
-                  >
-                </li>
-                <li>
-                  <a
-                    href="products.html?league=Bundesliga"
-                    class="dropdown-item"
-                    >Bundesliga</a
-                  >
-                </li>
-              </ul>
-            </li>
+    <div
+      class="container-fluid bg-dark"
+      style="font-size: 20px; position: fixed; top: 0px; z-index: 1"
+    >
+      <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="homepage.html"
+            ><img
+              src="https://qayqamfmsnxtnpwjltbe.supabase.co/storage/v1/object/public/TheVintageKit/logo%20png.png"
+              width="90px"
+          /></a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#myNavbar"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item">
+                <a class="nav-link ms-3" href="homepage.html">Home</a>
+              </li>
 
-            <li class="nav-item">
-              <a
-                class="nav-link ms-3"
-                href="products.html?league=National%20Team"
-                >National Teams</a
-              >
-            </li>
-          </ul>
+              <li class="nav-item">
+                <a class="nav-link ms-3" href="products.html?league="
+                  >Products</a
+                >
+              </li>
 
-          <form class="d-flex">
-            <button
-              type="button"
-              id="searchButton"
-              class="btn text-white"
-              style="font-size: 25px"
-            >
-              <i class="bi-search"></i>
-            </button>
-            <a href="cart.html"
-              ><button
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle ms-3"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  >Clubs</a
+                >
+                <ul class="dropdown-menu">
+                  <li>
+                    <a
+                      href="products.html?league=Premier%20League"
+                      class="dropdown-item"
+                      >Premier League</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="products.html?league=Serie%20A"
+                      class="dropdown-item"
+                      >Serie A</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="products.html?league=La%20Liga"
+                      class="dropdown-item"
+                      >La Liga</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="products.html?league=Bundesliga"
+                      class="dropdown-item"
+                      >Bundesliga</a
+                    >
+                  </li>
+                </ul>
+              </li>
+
+              <li class="nav-item">
+                <a
+                  class="nav-link ms-3"
+                  href="products.html?league=National%20Team"
+                  >National Teams</a
+                >
+              </li>
+            </ul>
+
+            <form class="d-flex">
+              <button
                 type="button"
+                id="searchButton"
                 class="btn text-white"
                 style="font-size: 25px"
               >
-                <i class="bi-cart"></i></button
-            ></a>
-          </form>
-        </div>
-      </div>
-    </nav>
-  </div>
-
-  <!--Form section-->
-  <div class="container" style="margin-top: 150px">
-    <h1>Contact Us</h1>
-    <form action="/action_page.php" class="was-validated">
-      <div class="mb-3 mt-3 w-50">
-        <label for="name" class="form-label">Name</label>
-        <input
-          type="text"
-          class="form-control"
-          id="name"
-          placeholder="Enter your name"
-          name="name"
-          required
-        />
-        <div class="invalid-feedback">Please fill in your information</div>
-      </div>
-
-      <div class="mb-3 mt-3 w-50">
-        <label for="email" class="form-label">Email</label>
-        <input
-          type="email"
-          class="form-control"
-          id="email"
-          placeholder="Enter your email"
-          name="email"
-          required
-        />
-        <div class="invalid-feedback">Please fill in your information</div>
-      </div>
-
-      <div class="mb-3 mt-3 w-75">
-        <label for="comment" class="form-label">Comment or message</label>
-        <textarea
-          type="text"
-          class="form-control"
-          id="comment"
-          placeholder="Enter your message"
-          name="comment"
-          style="height: 100px"
-          required
-        ></textarea>
-        <div class="invalid-feedback">Please enter your message</div>
-      </div>
-
-      <button type="submit" id="submit" class="btn btn-dark">Submit</button>
-    </form>
-  </div>
-
-  <!--FOOTER-->
-  <footer class="text-center text-sm-start text-white bg-dark mt-5">
-    <section class="bg-dark p-1">
-      <div class="container text-center text-md-start mt-2">
-        <div class="row mt-3">
-          <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
-            <h6 class="fw-bold">THE VINTAGE KIT</h6>
-            <hr
-              class="mb-2 mt-0 d-inline-block mx-auto"
-              style="width: 60px; background-color: darkslategray; height: 2px"
-            />
-            <p>
-              The best vintage kit selling website there is. Our shirts are of
-              the highest quality, very affordable prices and extremely quick
-              delivery.
-            </p>
-          </div>
-
-          <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-1">
-            <h6 class="fw-bold">SOCIAL MEDIA</h6>
-            <hr
-              class="mb-2 mt-0 d-inline-block mx-auto"
-              style="width: 60px; background-color: darkslategray; height: 2px"
-            />
-            <p>
-              <i class="bi-instagram"></i>
-              <a href="http://instagram.com" class="text-white">Instagram</a>
-            </p>
-            <p>
-              <i class="bi-twitter"></i>
-              <a href="http://twitter.com" class="text-white">Twitter</a>
-            </p>
-            <p>
-              <i class="bi-whatsapp"></i>
-              <a href="http://whatsapp.com" class="text-white">Whatsapp</a>
-            </p>
-            <p>
-              <i class="bi-tiktok"></i>
-              <a href="http://tiktok.com" class="text-white">TikTok</a>
-            </p>
-          </div>
-
-          <div class="col-md-4 col-lg-3 col-xl-3 mx-auto me-1 mb-md-0 mb-4">
-            <h6 class="fw-bold">CONTACT US</h6>
-            <hr
-              class="mb-4 mt-0 d-inline-block mx-auto"
-              style="width: 60px; background-color: darkslategray; height: 2px"
-            />
-            <p><i class="bi-geo"></i> Tirane, Albania</p>
-            <p>
-              <i class="bi-envelope-at"></i>
-              <a href="https://mailto:oltianelezi1@gmail.com"
-                >oltianelezi1@gmail.com</a
-              >
-            </p>
-            <p><i class="bi-telephone"></i> +355 69 73 36 362</p>
-            <p>
-              <i class="bi-chat"></i>
-              <a href="contact-us.html">Leave a message!</a>
-            </p>
-          </div>
-
-          <div class="col-md-3 col-lg-2 col-xl-2 me-5 mb-4">
-            <img
-              src="https://qayqamfmsnxtnpwjltbe.supabase.co/storage/v1/object/public/TheVintageKit/logo%20png.png"
-              height="200px"
-            />
+                <i class="bi-search"></i>
+              </button>
+              <a href="cart.html"
+                ><button
+                  type="button"
+                  class="btn text-white"
+                  style="font-size: 25px"
+                >
+                  <div class="cartSymbol"></div></button
+              ></a>
+            </form>
           </div>
         </div>
-      </div>
-    </section>
-    <div class="text-center p-1" style="background-color: rgba(0, 0, 0, 0.2)">
-      © 2022 Copyright:
-      <a class="text-white" href="https://TheVintageKit.com"
-        >TheVintageKit.com</a
-      >
+      </nav>
     </div>
-  </footer>
+
+    <!--Form section-->
+    <div class="container" style="margin-top: 150px">
+      <h1>Contact Us</h1>
+      <form class="was-validated">
+        <div class="mb-3 mt-3 w-50">
+          <label for="name" class="form-label">Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            placeholder="Enter your name"
+            name="name"
+            required
+          />
+          <div class="invalid-feedback">Please fill in your information</div>
+        </div>
+
+        <div class="mb-3 mt-3 w-50">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            placeholder="Enter your email"
+            name="email"
+            required
+          />
+          <div class="invalid-feedback">Please fill in your information</div>
+        </div>
+
+        <div class="mb-3 mt-3 w-75">
+          <label for="comment" class="form-label">Comment or message</label>
+          <textarea
+            type="text"
+            class="form-control"
+            id="comment"
+            placeholder="Enter your message"
+            name="comment"
+            style="height: 100px"
+            required
+          ></textarea>
+          <div class="invalid-feedback">Please enter your message</div>
+        </div>
+
+        <button id="submitBtn" class="btn btn-dark">Submit</button>
+      </form>
+    </div>
+
+    <!--FOOTER-->
+    <footer class="text-center text-sm-start text-white bg-dark mt-5">
+      <section class="bg-dark p-1">
+        <div class="container text-center text-md-start mt-2">
+          <div class="row mt-3">
+            <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+              <h6 class="fw-bold">THE VINTAGE KIT</h6>
+              <hr
+                class="mb-2 mt-0 d-inline-block mx-auto"
+                style="
+                  width: 60px;
+                  background-color: darkslategray;
+                  height: 2px;
+                "
+              />
+              <p>
+                The best vintage kit selling website there is. Our shirts are of
+                the highest quality, very affordable prices and extremely quick
+                delivery.
+              </p>
+            </div>
+
+            <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-1">
+              <h6 class="fw-bold">SOCIAL MEDIA</h6>
+              <hr
+                class="mb-2 mt-0 d-inline-block mx-auto"
+                style="
+                  width: 60px;
+                  background-color: darkslategray;
+                  height: 2px;
+                "
+              />
+              <p>
+                <i class="bi-instagram"></i>
+                <a href="http://instagram.com" class="text-white">Instagram</a>
+              </p>
+              <p>
+                <i class="bi-twitter"></i>
+                <a href="http://twitter.com" class="text-white">Twitter</a>
+              </p>
+              <p>
+                <i class="bi-whatsapp"></i>
+                <a href="http://whatsapp.com" class="text-white">Whatsapp</a>
+              </p>
+              <p>
+                <i class="bi-tiktok"></i>
+                <a href="http://tiktok.com" class="text-white">TikTok</a>
+              </p>
+            </div>
+
+            <div class="col-md-4 col-lg-3 col-xl-3 mx-auto me-1 mb-md-0 mb-4">
+              <h6 class="fw-bold">CONTACT US</h6>
+              <hr
+                class="mb-4 mt-0 d-inline-block mx-auto"
+                style="
+                  width: 60px;
+                  background-color: darkslategray;
+                  height: 2px;
+                "
+              />
+              <p><i class="bi-geo"></i> Tirane, Albania</p>
+              <p>
+                <i class="bi-envelope-at"></i>
+                <a href="https://mailto:oltianelezi1@gmail.com"
+                  >oltianelezi1@gmail.com</a
+                >
+              </p>
+              <p><i class="bi-telephone"></i> +355 69 73 36 362</p>
+              <p>
+                <i class="bi-chat"></i>
+                <a href="contact-us.html">Leave a message!</a>
+              </p>
+            </div>
+
+            <div class="col-md-3 col-lg-2 col-xl-2 me-5 mb-4">
+              <img
+                src="https://qayqamfmsnxtnpwjltbe.supabase.co/storage/v1/object/public/TheVintageKit/logo%20png.png"
+                height="200px"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="text-center p-1" style="background-color: rgba(0, 0, 0, 0.2)">
+        © 2022 Copyright:
+        <a class="text-white" href="https://TheVintageKit.com"
+          >TheVintageKit.com</a
+        >
+      </div>
+    </footer>
+  </body>
 </html>

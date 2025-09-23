@@ -26,12 +26,13 @@
     />
     <style>
       /* Navbar fixed on top */
-      .navbar,
-      .navbar-container {
+      .container-fluid.bg-dark {
         position: fixed;
         top: 0;
+        left: 0;
         width: 100%;
         z-index: 2000;
+        font-size: 20px;
       }
 
       /* PayPal container */
@@ -135,11 +136,11 @@
                   paymentAmount: checkoutReceipt.checkoutPrice,
                   address,
                   order: checkoutReceipt.order,
-                  email: details.payer.email_address
+                  email: details.payer.email_address,
                 };
                 console.log(payload);
-                
-                alert("Payment completed by " + details.payer.name.given_name);
+
+                // alert("Payment completed by " + details.payer.name.given_name);
 
                 fetch("http://localhost:5134/order", {
                   method: "POST",
@@ -148,7 +149,15 @@
                 })
                   .then((res) =>
                     res.ok
-                      ? console.log("Backend updated")
+                      ? $(document).ready(function () {
+                          $("#paymentAlert").slideDown();
+                          $("#paypal-overlay").show();
+
+                          $(document).on("click", "#alertRemove", function () {
+                            $("#paymentAlert").slideUp();
+                            window.location.replace("homepage.html");
+                          });
+                        })
                       : console.error("Backend error")
                   )
                   .catch((err) => console.error(err));
@@ -163,19 +172,27 @@
     </script>
   </head>
   <body>
-    <!-- Navbar -->
-    <div
-      class="container-fluid bg-dark navbar-container"
-      style="font-size: 20px"
-    >
+    <!-- Confirmation Alert-->
+    <div class="container mt-3 d-flex justify-content-center">
+      <div
+        class="alert alert-success"
+        id="paymentAlert"
+        style="position: fixed; top: 150px; z-index: 2; display: none"
+      >
+        <strong>Order completed! Check your email for confirmation.</strong>
+        <button class="btn btn-success" id="alertRemove">Accept</button>
+      </div>
+    </div>
+
+    <!--Navbar Starts-->
+    <div class="container-fluid bg-dark">
       <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
         <div class="container-fluid">
-          <a class="navbar-brand" href="homepage.html">
-            <img
+          <a class="navbar-brand" href="homepage.html"
+            ><img
               src="https://qayqamfmsnxtnpwjltbe.supabase.co/storage/v1/object/public/TheVintageKit/logo%20png.png"
               width="90px"
-            />
-          </a>
+          /></a>
           <button
             class="navbar-toggler"
             type="button"
@@ -189,11 +206,13 @@
               <li class="nav-item">
                 <a class="nav-link ms-3" href="homepage.html">Home</a>
               </li>
+
               <li class="nav-item">
                 <a class="nav-link ms-3" href="products.html?league="
                   >Products</a
                 >
               </li>
+
               <li class="nav-item dropdown">
                 <a
                   class="nav-link dropdown-toggle ms-3"
@@ -232,6 +251,7 @@
                   </li>
                 </ul>
               </li>
+
               <li class="nav-item">
                 <a
                   class="nav-link ms-3"
@@ -240,6 +260,7 @@
                 >
               </li>
             </ul>
+
             <form class="d-flex">
               <button
                 type="button"
@@ -255,14 +276,17 @@
                   class="btn text-white"
                   style="font-size: 25px"
                 >
-                  <i class="bi-cart-fill"></i></button
-              ></a>
+                  <div class="cartSymbol"><i class="bi-cart-fill"></i></div>
+                </button>
+              </a>
             </form>
           </div>
         </div>
       </nav>
     </div>
 
+    <!--Navbar Over-->
+    
     <!-- Checkout -->
     <div
       class="container mt-10 p-4 bg-white rounded shadow checkout-container"
