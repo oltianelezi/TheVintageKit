@@ -8,16 +8,15 @@ var connectionString = builder.Configuration.GetConnectionString("SupabaseDb");
 
 builder.Services.AddControllers();
 
-// Register repository with dependency injection
 builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<OrderRepository>();
 builder.Services.AddScoped<AddressRepository>();
 builder.Services.AddScoped<OrderItemRepository>();
+builder.Services.AddScoped<MessageRepository>();
 builder.Services.AddScoped<EmailService>();
 
 
 
-// ---- ADD THIS: CORS POLICY ----
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
