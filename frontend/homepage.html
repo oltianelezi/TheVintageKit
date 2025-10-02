@@ -42,7 +42,7 @@
 
       function loadProducts(products, destination) {
         for (const id of products) {
-          fetch(`http://localhost:5134/product/${id}`)
+          fetch(`https://thevintagekit.onrender.com/product/${id}`) // change onrender url to "http://localhost:5134" for local deployment
             .then((response) => response.json()) // parse JSON once
             .then((product) => {
               console.log(product);
@@ -109,7 +109,6 @@
     </script>
   </head>
   <body>
-
     <!--Add to cart Alert-->
     <div class="container mt-3 d-flex justify-content-center">
       <div

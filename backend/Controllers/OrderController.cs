@@ -89,10 +89,11 @@ namespace backend.Controllers
             var emailBody = $"Hello {newAddress.FirstName} {newAddress.LastName},\n\nYour order: \n{orderListEmail} has been received!";
 
             // Replace temp mail with NewOrder.Email
-            var emailTask = _emailService.SendEmailAsync("theicekiller16@gmail.com", "Order Confirmation", emailBody);
+            // var emailTask = _emailService.SendEmailAsync("theicekiller16@gmail.com", "Order Confirmation", emailBody);
             var saveItemsTask = _orderItemRepository.NewOrderItems(orderItems);
 
-            await Task.WhenAll(emailTask, saveItemsTask);
+            // await Task.WhenAll(emailTask, saveItemsTask); for when email is fixed on full deployment
+            await saveItemsTask;
 
             return Ok();
         }

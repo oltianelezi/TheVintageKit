@@ -79,7 +79,7 @@
         }
 
         // Fetch single product
-        fetch(`http://localhost:5134/product/${productId}`)
+        fetch(`https://thevintagekit.onrender.com/product/${productId}`)
           .then((response) => {
             if (!response.ok) {
               throw new Error("Product not found");

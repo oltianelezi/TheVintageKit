@@ -33,7 +33,7 @@
       async function loadProducts() {
         products = await Promise.all(
           cart.map((item) =>
-            fetch(`http://localhost:5134/product/${item.productId}`).then(
+            fetch(`https://thevintagekit.onrender.com/product/${item.productId}`).then(
               (res) => res.json()
             )
           )
