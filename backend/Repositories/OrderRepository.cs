@@ -8,9 +8,9 @@ public class OrderRepository
 {
     private readonly string _connectionString;
 
-    public OrderRepository(IConfiguration config)
+    public OrderRepository()
     {
-        _connectionString = config.GetConnectionString("SupabaseDb");
+          _connectionString = Environment.GetEnvironmentVariable("SUPABASE_DB");
     }
 
     public async Task<int> CreateOrder(Order NewOrder)
@@ -30,7 +30,7 @@ public class OrderRepository
         command.Parameters.AddWithValue("@email", NewOrder.Email);
         command.Parameters.AddWithValue("@addressid", NewOrder.AddressId);
 
-        var newId = (long)await command.ExecuteScalarAsync(); // addressid is BIGINT in DB
+        var newId = (long)await command.ExecuteScalarAsync();
         return (int)newId;
     }
 

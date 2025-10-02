@@ -4,7 +4,7 @@ using backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("SupabaseDb");
+var connectionString = Environment.GetEnvironmentVariable("SUPABASE_DB");
 
 builder.Services.AddControllers();
 

@@ -9,9 +9,9 @@ public class OrderItemRepository
 {
     private readonly string _connectionString;
 
-    public OrderItemRepository(IConfiguration config)
+    public OrderItemRepository()
     {
-        _connectionString = config.GetConnectionString("SupabaseDb");
+          _connectionString = Environment.GetEnvironmentVariable("SUPABASE_DB");
     }
 
     public async Task NewOrderItems(List<OrderItem> orderItems)
@@ -24,7 +24,7 @@ public class OrderItemRepository
         foreach (var item in orderItems)
         {
             await using var command = new NpgsqlCommand(@"
-            INSERT INTO orderitem (productid, orderid, quantity, size, unitprice)
+            INSERT INTO orderitems (productid, orderid, quantity, size, unitprice)
             VALUES (@productid, @orderid, @quantity, @size, @unitprice);
         ", connection, transaction);
 

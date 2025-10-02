@@ -8,9 +8,9 @@ public class AddressRepository
 {
     private readonly string _connectionString;
 
-    public AddressRepository(IConfiguration config)
+    public AddressRepository()
     {
-        _connectionString = config.GetConnectionString("SupabaseDb");
+          _connectionString = Environment.GetEnvironmentVariable("SUPABASE_DB");
     }
 
     public async Task<int> CreateNewAddress(Address NewAddress)

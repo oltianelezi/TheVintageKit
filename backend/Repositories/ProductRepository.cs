@@ -7,9 +7,9 @@ namespace backend.Repositories
     {
         private readonly string _connectionString;
 
-        public ProductRepository(IConfiguration config)
+        public ProductRepository()
         {
-            _connectionString = config.GetConnectionString("SupabaseDb");
+            _connectionString = Environment.GetEnvironmentVariable("SUPABASE_DB");
         }
 
         public async Task<List<Product>> GetProducts()
