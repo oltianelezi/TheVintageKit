@@ -25,4 +25,4 @@ EXPOSE 80
 ENV SUPABASE_DB=""
 
 # Start the app
-ENTRYPOINT ["dotnet", "backend.dll"]  # <-- replace 'backend.dll' with actual DLL name
+ENTRYPOINT ["dotnet", "backend.dll"]
