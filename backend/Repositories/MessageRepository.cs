@@ -8,9 +8,9 @@ public class MessageRepository
 {
     private readonly string _connectionString;
 
-    public MessageRepository(IConfiguration config)
+    public MessageRepository()
     {
-        _connectionString = config.GetConnectionString("SupabaseDb");
+          _connectionString = Environment.GetEnvironmentVariable("SUPABASE_DB");
     }
 
     public async Task CreateMessage(Message NewMessage)
