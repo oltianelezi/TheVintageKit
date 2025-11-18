@@ -2,123 +2,136 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+
+    <!-- Makes the layout responsive on mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS framework -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
-      crossorigin="anonymous"
     />
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
-      crossorigin="anonymous"
-    ></script>
+
+    <!-- Bootstrap JavaScript (for dropdowns, navbar toggle, etc.) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Logo shown in browser tab -->
     <link
       rel="icon"
       href="https://tgnrbgfnwubmcwxtlsxp.supabase.co/storage/v1/object/public/VintageKit/logo.ico"
     />
+
+    <!-- Icons used for cart, social media, etc. -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css"
     />
+
+    <!-- Page title (gets replaced dynamically by JS) -->
     <title>The Vintage Kits - Product Details</title>
 
+    <!-- jQuery (used for Document Object Model control + events) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
     <script>
-      // Load cart or start empty
+      // Load cart from localStorage
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      // Global variable to store the product once fetched
       let currentProduct = null;
 
+      // When page is ready run these
       $(document).ready(function () {
-        renders();
-        loadProduct();
+        renders(); // update cart icon
+        loadProduct(); // load product from backend
       });
 
       function renders() {
-        renderCartIcon();
+        renderCartIcon(); // display cart icon or filled icon
       }
 
+      // Listen for Add to Cart button click
       $(document).on("click", ".addToCart", function (event) {
-        event.stopPropagation(); // This prevents the card click event from firing
-
-        const productId = $(this).data("id");
-        addToCart(productId);
-        $("#cartAlert").slideDown();
-
-        $(document).on("click", "#alertRemove", function () {
-          $("#cartAlert").slideUp();
-        });
+        event.stopPropagation(); // stops click from triggering other events
+        addToCart(); // adds product to cart
+        $("#cartAlert").slideDown(); // show success alert popup
       });
 
+      // Renders the shopping cart icon
       function renderCartIcon() {
         if (cart.length === 0) {
-          $(".cartSymbol").replaceWith(
-            `<div class="cartSymbol"><i class="bi-cart"></i></div>`
-          );
+          $(".cartSymbol").replaceWith(`<div class="cartSymbol"><i class="bi-cart"></i></div>`); //empty
         } else {
-          $(".cartSymbol").replaceWith(
-            `<div class="cartSymbol"><i class="bi-cart-fill"></i></div>`
-          );
+          $(".cartSymbol").replaceWith(`<div class="cartSymbol"><i class="bi-cart-fill"></i></div>`); //filled
         }
       }
 
+      // Fetch product details from backend API
       function loadProduct() {
         const params = new URLSearchParams(window.location.search);
         const productId = params.get("productId");
 
         if (!productId) {
+          // No ID found → Display error
           $("#productDetails").html(`
             <div class="alert alert-danger text-center">
               <h4>Product not found</h4>
-              <p>No product ID provided.</p>
               <a href="products.html" class="btn btn-dark">Back to Products</a>
             </div>
           `);
           return;
         }
 
-        // Fetch single product
+        // Frontend and Backend connects
         fetch(`https://thevintagekit.onrender.com/product/${productId}`)
           .then((response) => {
-            if (!response.ok) {
-              throw new Error("Product not found");
-            }
-            return response.json();
+            if (!response.ok) throw new Error("Product not found");
+            return response.json(); // convert backend response to JS object
           })
           .then((product) => {
-            currentProduct = product;
-            renderProduct(product);
-            document.title = `${product.productName} - The Vintage Kits`;
+            currentProduct = product; // store globally/ can be used in all the functions
+            renderProduct(product); // build product UI dynamically
+            document.title = `${product.productName} - The Vintage Kits`; // replace page title
           })
-          .catch((error) => {
-            console.error("Error fetching product:", error);
+          .catch(() => {
             $("#productDetails").html(`
               <div class="alert alert-danger text-center">
                 <h4>Product not found</h4>
-                <p>Sorry, we couldn't find the product you're looking for.</p>
-                <a href="products.html" class="btn btn-dark">Back to Products</a>
+                <a href="products.html" class="btn btn-dark">Back</a>
               </div>
             `);
           });
       }
 
+      // Dynamically inserts product info into page
       function renderProduct(product) {
-        const priceFormatted = product.price.toFixed(2);
+        const priceFormatted = product.price.toFixed(2); // format as 2 shifra pas presjes 0.00
+
         const productHtml = `
+
+          <!-- LEFT SIDE: PRODUCT IMAGE -->
+
           <div class="row">
             <div class="col-md-6 mb-4">
               <div class="text-center">
-                <img src="${product.imageURL}" class="img-fluid rounded shadow" alt="${product.productName}" style="max-height: 600px;">
+                <img src="${product.imageURL}"
+                     class="img-fluid rounded shadow"
+                     style="max-height: 600px;">
               </div>
             </div>
+
+            <!-- RIGHT SIDE: PRODUCT INFO -->
+
             <div class="col-md-6">
               <div class="bg-white rounded p-4 shadow">
+
                 <h1 class="mb-3">${product.productName}</h1>
                 <h2 class="text-success mb-4">$${priceFormatted}</h2>
-                
+
+                <!-- SIZE DROPDOWN -->
+
                 <div class="mb-3">
-                  <label for="size" class="form-label fw-bold">Size:</label>
+                  <label class="form-label fw-bold">Size:</label>
                   <select class="form-select" id="size">
                     <option value="S">S - Small</option>
                     <option value="M" selected>M - Medium</option>
@@ -127,14 +140,20 @@
                   </select>
                 </div>
 
+
+                <!-- QUANTITY SELECTOR -->
+
                 <div class="mb-4">
-                  <label for="quantity" class="form-label fw-bold">Quantity:</label>
+                  <label class="form-label fw-bold">Quantity:</label>
                   <div class="input-group" style="width: 150px;">
-                    <button class="btn btn-outline-secondary" type="button" id="decreaseBtn">-</button>
-                    <input type="number" class="form-control text-center" id="quantity" value="1" min="1" max="10">
-                    <button class="btn btn-outline-secondary" type="button" id="increaseBtn">+</button>
+                    <button class="btn btn-outline-secondary" id="decreaseBtn">-</button>
+                    <input type="number" class="form-control text-center"
+                           id="quantity" value="1" min="1" max="10">
+                    <button class="btn btn-outline-secondary" id="increaseBtn">+</button>
                   </div>
                 </div>
+
+                <!-- ADD TO CART BUTTON -->
 
                 <div class="d-grid gap-2 mb-3">
                   <button class="btn btn-dark btn-lg addToCart">
@@ -145,79 +164,169 @@
                 <div class="mt-4">
                   <h5>Product Details</h5>
                   <ul class="list-unstyled">
-                    <li><strong>Description: </strong> ${product.description}</li>
-                    <li><strong>Fit: </strong> Regular fit</li>
+                    <li><strong>Description:</strong> ${product.description}</li>
+                    <li><strong>Fit:</strong> Regular fit</li>
                   </ul>
                 </div>
+
+                <!-- COMMENTS (localStorage only, not backend) -->
+
+                <div class="mt-4" id="commentsSection">
+                  <h5>Comments</h5>
+
+                  <!-- JS will load comments here -->
+
+                  <div id="commentsList" class="mb-3"></div>
+
+                  <!-- COMMENT FORM -->
+
+                  <div class="card p-3 mb-3 bg-light">
+                    <input type="text" id="commentName" class="form-control mb-2"
+                           placeholder="Your name">
+
+                    <textarea id="commentText" class="form-control mb-2"
+                              rows="3" placeholder="Write a comment..."></textarea>
+
+                    <div class="d-flex justify-content-end">
+                      <button id="submitComment" class="btn btn-outline-dark">
+                        Submit Comment
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
+
           </div>
         `;
 
-        $("#productDetails").html(productHtml);
-
-        // Bind events
-        bindProductEvents();
+        $("#productDetails").html(productHtml); // insert HTML into element with id productDetails
+        bindProductEvents(); // enable quantity buttons + comment submit
+        renderComments(product.productID); // load existing comments, if are any
       }
 
+      // Attach events after HTML loads
       function bindProductEvents() {
-        // Quantity controls
-        $("#increaseBtn").click(function () {
+        $("#increaseBtn").click(() => {
+          $("#quantity").val(parseInt($("#quantity").val()) + 1); // increase quantity by 1 when you press +
+        });
+
+        $("#decreaseBtn").click(() => {
           const qty = parseInt($("#quantity").val());
-          $("#quantity").val(qty + 1);
-          
+          if (qty > 1) $("#quantity").val(qty - 1); // decrease quantity by 1 when you press - (if there is more than 1)
         });
 
-        $("#decreaseBtn").click(function () {
-          const qty = parseInt($("#quantity").val());
-          if (qty > 1) {
-            $("#quantity").val(qty - 1);
-          }
+        $(document).off("click", "#submitComment").on("click", "#submitComment", function () { //.off removes previous event to avoid duplicates and .on adds new event
+          const name = $("#commentName").val().trim();
+          const text = $("#commentText").val().trim();
+          if (!text) return alert("Please enter a comment.");
+
+          const productId = currentProduct.productID; // get current product ID
+          const comments = loadComments(productId); // load existing comments for this product id
+
+          // Add new comment
+          comments.push({
+            id: Date.now(),
+            name: name || "Anonymous",
+            text: text,
+            createdAt: new Date().toISOString(),
+          });
+
+          saveComments(productId, comments); // save updated comments to localStorage
+          renderComments(productId);
+          $("#commentText").val(""); // clear field
+          $("#commentName").val(""); // clear name field
         });
 
-        $("#quantity").change(function () {
-          let qty = parseInt($(this).val());
-          if (qty < 1) qty = 1;
-          $(this).val(qty);
-        });
+        // Delete comment
+        $(document).off("click", ".deleteComment").on("click", ".deleteComment", function () { // .off removes previous event to avoid duplicates and .on adds new event
+          const id = $(this).data("id"); // get comment ID to delete
+          const productId = currentProduct.productID; 
 
-        // Add to cart
-        $("#addToCartBtn").click(function () {
-          addToCart();
+          let comments = loadComments(productId); // load existing comments
+          comments = comments.filter((c) => c.id != id); // remove the comment with the matching ID
+
+          saveComments(productId, comments);
+          renderComments(productId);
         });
       }
 
+      // LocalStorage functions
+      function loadComments(id) {
+        return JSON.parse(localStorage.getItem("comments_" + id) || "[]");
+      }
+
+      function saveComments(id, comments) {
+        localStorage.setItem("comments_" + id, JSON.stringify(comments));
+      }
+
+      function renderComments(id) {
+        const comments = loadComments(id); // load comments for this product id
+        const container = $("#commentsList"); // comments container
+
+        if (comments.length === 0) { //if no comments exist
+          container.html(`<p class="text-muted">No comments yet.</p>`);
+          return; //stop here dont run the rest
+        }
+
+        // if there are comments, show newest comment first
+        container.html(
+          comments
+            .slice() // create a copy dont modify original
+            .reverse() //flip order to show newest first
+            .map((c) => { //loop through comments and build HTML for each
+              const d = new Date(c.createdAt).toLocaleString(); // format date
+              return `
+                <div class="card mb-2">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <strong>${c.name}</strong>
+                        <div class="text-muted small">${d}</div>
+                      </div>
+                      <button class="btn btn-sm btn-outline-danger deleteComment"
+                              data-id="${c.id}">
+                        Delete
+                      </button>
+                    </div>
+                    <p class="mt-2 mb-0">${c.text}</p>
+                  </div>
+                </div>
+              `;
+            })
+            .join("") // combine all html strings into one big string
+        );
+      }
+
+      // Adds product to cart array
       function addToCart() {
         if (!currentProduct) return;
 
-        const size = $("#size").val();
-        const quantity = parseInt($("#quantity").val());
-        const productId = currentProduct.productID;
-
         cart.push({
-          productId: productId,
-          quantity: quantity,
-          size: size,
+          productId: currentProduct.productID,
+          quantity: parseInt($("#quantity").val()),
+          size: $("#size").val(),
           productName: currentProduct.productName,
           price: currentProduct.price,
           imageURL: currentProduct.imageURL,
         });
 
         localStorage.setItem("cart", JSON.stringify(cart));
-        renders();
+        renders(); // update cart icon
       }
-
-      
     </script>
 
+    <!-- Background color of page -->
     <style>
       body {
         background-color: darkslategray;
       }
     </style>
   </head>
+
   <body>
-    <!--Add to cart Alert-->
+    <!-- Add-to-cart success popup -->
     <div class="container mt-3 d-flex justify-content-center">
       <div
         class="alert alert-success"
@@ -225,22 +334,27 @@
         style="position: fixed; top: 150px; z-index: 1; display: none"
       >
         <strong>Item added to cart!</strong>
-        <button class="btn btn-success" id="alertRemove">Accept</button>
+        <button class="btn btn-success" id="alertRemove">OK</button>
       </div>
     </div>
 
-    <!-- Nav bar -->
+    <!-- NAVBAR -->
     <div
       class="container-fluid bg-dark"
-      style="font-size: 20px; position: fixed; top: 0px; z-index: 1050"
+      style="position: fixed; top: 0; width: 100%; z-index: 1050"
     >
-      <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+      <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container-fluid">
-          <a class="navbar-brand" href="homepage.html"
-            ><img
+
+          <!-- Logo -->
+          <a class="navbar-brand" href="homepage.html">
+            <img
               src="https://tgnrbgfnwubmcwxtlsxp.supabase.co/storage/v1/object/public/VintageKit/logo%20png.png"
               width="90px"
-          /></a>
+            />
+          </a>
+
+          <!-- Mobile menu button -->
           <button
             class="navbar-toggler"
             type="button"
@@ -249,184 +363,123 @@
           >
             <span class="navbar-toggler-icon"></span>
           </button>
+
+          <!-- Menu links -->
           <div class="collapse navbar-collapse" id="myNavbar">
+
+            <!-- LEFT MENU -->
             <ul class="navbar-nav me-auto">
+
               <li class="nav-item">
                 <a class="nav-link ms-3" href="homepage.html">Home</a>
               </li>
 
               <li class="nav-item">
-                <a class="nav-link ms-3" href="products.html?league="
-                  >Products</a
-                >
+                <a class="nav-link ms-3" href="products.html?league=">Products</a>
               </li>
 
+              <!-- Dropdown menu -->
               <li class="nav-item dropdown">
                 <a
                   class="nav-link dropdown-toggle ms-3"
-                  href="#"
-                  role="button"
                   data-bs-toggle="dropdown"
-                  >Clubs</a
                 >
+                  Clubs
+                </a>
+
                 <ul class="dropdown-menu">
-                  <li>
-                    <a
-                      href="products.html?league=Premier%20League"
-                      class="dropdown-item"
-                      >Premier League</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      href="products.html?league=Serie%20A"
-                      class="dropdown-item"
-                      >Serie A</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      href="products.html?league=La%20Liga"
-                      class="dropdown-item"
-                      >La Liga</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      href="products.html?league=Bundesliga"
-                      class="dropdown-item"
-                      >Bundesliga</a
-                    >
-                  </li>
+                  <li><a class="dropdown-item" href="products.html?league=Premier%20League">Premier League</a></li>
+                  <li><a class="dropdown-item" href="products.html?league=Serie%20A">Serie A</a></li>
+                  <li><a class="dropdown-item" href="products.html?league=La%20Liga">La Liga</a></li>
+                  <li><a class="dropdown-item" href="products.html?league=Bundesliga">Bundesliga</a></li>
                 </ul>
               </li>
 
               <li class="nav-item">
-                <a
-                  class="nav-link ms-3"
-                  href="products.html?league=National%20Team"
-                  >National Teams</a
-                >
+                <a class="nav-link ms-3" href="products.html?league=National%20Team">National Teams</a>
               </li>
+
             </ul>
 
+            <!-- CART BUTTON ON RIGHT -->
             <form class="d-flex">
-              <a href="cart.html"
-                ><button
-                  type="button"
-                  class="btn text-white"
-                  style="font-size: 25px"
-                >
-                  <div class="cartSymbol"></div>
+              <a href="cart.html">
+                <button type="button" class="btn text-white" style="font-size: 25px">
+                  <div class="cartSymbol"></div> <!-- JS replaces with icon -->
                 </button>
               </a>
             </form>
+
           </div>
         </div>
       </nav>
     </div>
 
-    <!-- Main Product Section -->
+    <!-- MAIN CONTENT -->
     <div class="container" style="margin-top: 150px; margin-bottom: 50px">
       <div id="productDetails">
+
+        <!-- Loading animation while fetching -->
         <div class="text-center">
-          <div class="spinner-border text-light" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
+          <div class="spinner-border text-light"></div>
           <p class="text-white mt-2">Loading product details...</p>
         </div>
+
       </div>
     </div>
 
-    <!--FOOTER-->
+    <!-- FOOTER SECTION -->
     <footer class="text-center text-sm-start text-white bg-dark">
       <section class="bg-dark p-1">
         <div class="container text-center text-md-start mt-2">
+
           <div class="row mt-3">
-            <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+
+            <!-- About -->
+            <div class="col-md-3 col-lg-4 col-xl-3 mb-4">
               <h6 class="fw-bold">THE VINTAGE KIT</h6>
-              <hr
-                class="mb-2 mt-0 d-inline-block mx-auto"
-                style="
-                  width: 60px;
-                  background-color: darkslategray;
-                  height: 2px;
-                "
-              />
+              <hr style="width:60px;background-color:darkslategray;height:2px" />
               <p>
-                The best vintage kit selling website there is. Our shirts are of
-                the highest quality, very affordable prices and extremely quick
-                delivery.
+                The best vintage kit selling website. Quality products, fast delivery.
               </p>
             </div>
 
-            <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-1">
+            <!-- Social -->
+            <div class="col-md-2 col-lg-2 col-xl-2 mb-1">
               <h6 class="fw-bold">SOCIAL MEDIA</h6>
-              <hr
-                class="mb-2 mt-0 d-inline-block mx-auto"
-                style="
-                  width: 60px;
-                  background-color: darkslategray;
-                  height: 2px;
-                "
-              />
-              <p>
-                <i class="bi-instagram"></i>
-                <a href="http://instagram.com" class="text-white">Instagram</a>
-              </p>
-              <p>
-                <i class="bi-twitter"></i>
-                <a href="http://twitter.com" class="text-white">Twitter</a>
-              </p>
-              <p>
-                <i class="bi-whatsapp"></i>
-                <a href="http://whatsapp.com" class="text-white">Whatsapp</a>
-              </p>
-              <p>
-                <i class="bi-tiktok"></i>
-                <a href="http://tiktok.com" class="text-white">TikTok</a>
-              </p>
+              <hr style="width:60px;background-color:darkslategray;height:2px" />
+
+              <p><i class="bi-instagram"></i> Instagram</p>
+              <p><i class="bi-twitter"></i> Twitter</p>
+              <p><i class="bi-whatsapp"></i> Whatsapp</p>
+              <p><i class="bi-tiktok"></i> TikTok</p>
             </div>
 
-            <div class="col-md-4 col-lg-3 col-xl-3 mx-auto me-1 mb-md-0 mb-4">
-              <h6 class="fw-bold">CONTACT US</h6>
-              <hr
-                class="mb-4 mt-0 d-inline-block mx-auto"
-                style="
-                  width: 60px;
-                  background-color: darkslategray;
-                  height: 2px;
-                "
-              />
+            <!-- Contact -->
+            <div class="col-md-4 col-lg-3 col-xl-3 mb-4">
+              <h6 class="fw-bold">CONTACT</h6>
+              <hr style="width:60px;background-color:darkslategray;height:2px" />
               <p><i class="bi-geo"></i> Tirane, Albania</p>
-              <p>
-                <i class="bi-envelope-at"></i>
-                <a href="https://mailto:oltianelezi1@gmail.com"
-                  >oltianelezi1@gmail.com</a
-                >
-              </p>
+              <p><i class="bi-envelope"></i> oltianelezi1@gmail.com</p>
               <p><i class="bi-telephone"></i> +355 69 73 36 362</p>
-              <p>
-                <i class="bi-chat"></i>
-                <a href="contact-us.html">Leave a message!</a>
-              </p>
             </div>
 
-            <div class="col-md-3 col-lg-2 col-xl-2 me-5 mb-4">
+            <!-- Logo -->
+            <div class="col-md-3 col-lg-2 col-xl-2 mb-4">
               <img
                 src="https://tgnrbgfnwubmcwxtlsxp.supabase.co/storage/v1/object/public/VintageKit/logo%20png.png"
                 height="200px"
               />
             </div>
+
           </div>
         </div>
       </section>
+
       <div class="text-center p-1" style="background-color: rgba(0, 0, 0, 0.2)">
-        © 2022 Copyright:
-        <a class="text-white" href="https://TheVintageKit.com"
-          >TheVintageKit.com</a
-        >
+        © 2022 TheVintageKit.com
       </div>
     </footer>
+
   </body>
 </html>
