@@ -60,9 +60,13 @@
       // Renders the shopping cart icon
       function renderCartIcon() {
         if (cart.length === 0) {
-          $(".cartSymbol").replaceWith(`<div class="cartSymbol"><i class="bi-cart"></i></div>`); //empty
+          $(".cartSymbol").replaceWith(
+            `<div class="cartSymbol"><i class="bi-cart"></i></div>`
+          ); //empty
         } else {
-          $(".cartSymbol").replaceWith(`<div class="cartSymbol"><i class="bi-cart-fill"></i></div>`); //filled
+          $(".cartSymbol").replaceWith(
+            `<div class="cartSymbol"><i class="bi-cart-fill"></i></div>`
+          ); //filled
         }
       }
 
@@ -169,32 +173,6 @@
                   </ul>
                 </div>
 
-                <!-- COMMENTS (localStorage only, not backend) -->
-
-                <div class="mt-4" id="commentsSection">
-                  <h5>Comments</h5>
-
-                  <!-- JS will load comments here -->
-
-                  <div id="commentsList" class="mb-3"></div>
-
-                  <!-- COMMENT FORM -->
-
-                  <div class="card p-3 mb-3 bg-light">
-                    <input type="text" id="commentName" class="form-control mb-2"
-                           placeholder="Your name">
-
-                    <textarea id="commentText" class="form-control mb-2"
-                              rows="3" placeholder="Write a comment..."></textarea>
-
-                    <div class="d-flex justify-content-end">
-                      <button id="submitComment" class="btn btn-outline-dark">
-                        Submit Comment
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
               </div>
             </div>
 
@@ -202,8 +180,7 @@
         `;
 
         $("#productDetails").html(productHtml); // insert HTML into element with id productDetails
-        bindProductEvents(); // enable quantity buttons + comment submit
-        renderComments(product.productID); // load existing comments, if are any
+        bindProductEvents(); // enable quantity buttons
       }
 
       // Attach events after HTML loads
@@ -216,87 +193,6 @@
           const qty = parseInt($("#quantity").val());
           if (qty > 1) $("#quantity").val(qty - 1); // decrease quantity by 1 when you press - (if there is more than 1)
         });
-
-        $(document).off("click", "#submitComment").on("click", "#submitComment", function () { //.off removes previous event to avoid duplicates and .on adds new event
-          const name = $("#commentName").val().trim();
-          const text = $("#commentText").val().trim();
-          if (!text) return alert("Please enter a comment.");
-
-          const productId = currentProduct.productID; // get current product ID
-          const comments = loadComments(productId); // load existing comments for this product id
-
-          // Add new comment
-          comments.push({
-            id: Date.now(),
-            name: name || "Anonymous",
-            text: text,
-            createdAt: new Date().toISOString(),
-          });
-
-          saveComments(productId, comments); // save updated comments to localStorage
-          renderComments(productId);
-          $("#commentText").val(""); // clear field
-          $("#commentName").val(""); // clear name field
-        });
-
-        // Delete comment
-        $(document).off("click", ".deleteComment").on("click", ".deleteComment", function () { // .off removes previous event to avoid duplicates and .on adds new event
-          const id = $(this).data("id"); // get comment ID to delete
-          const productId = currentProduct.productID; 
-
-          let comments = loadComments(productId); // load existing comments
-          comments = comments.filter((c) => c.id != id); // remove the comment with the matching ID
-
-          saveComments(productId, comments);
-          renderComments(productId);
-        });
-      }
-
-      // LocalStorage functions
-      function loadComments(id) {
-        return JSON.parse(localStorage.getItem("comments_" + id) || "[]");
-      }
-
-      function saveComments(id, comments) {
-        localStorage.setItem("comments_" + id, JSON.stringify(comments));
-      }
-
-      function renderComments(id) {
-        const comments = loadComments(id); // load comments for this product id
-        const container = $("#commentsList"); // comments container
-
-        if (comments.length === 0) { //if no comments exist
-          container.html(`<p class="text-muted">No comments yet.</p>`);
-          return; //stop here dont run the rest
-        }
-
-        // if there are comments, show newest comment first
-        container.html(
-          comments
-            .slice() // create a copy dont modify original
-            .reverse() //flip order to show newest first
-            .map((c) => { //loop through comments and build HTML for each
-              const d = new Date(c.createdAt).toLocaleString(); // format date
-              return `
-                <div class="card mb-2">
-                  <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                      <div>
-                        <strong>${c.name}</strong>
-                        <div class="text-muted small">${d}</div>
-                      </div>
-                      <button class="btn btn-sm btn-outline-danger deleteComment"
-                              data-id="${c.id}">
-                        Delete
-                      </button>
-                    </div>
-                    <p class="mt-2 mb-0">${c.text}</p>
-                  </div>
-                </div>
-              `;
-            })
-            .join("") // combine all html strings into one big string
-        );
       }
 
       // Adds product to cart array
