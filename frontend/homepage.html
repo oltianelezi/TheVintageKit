@@ -3,32 +3,38 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
       crossorigin="anonymous"
     />
+    <!-- Bootstrap interactive(carousel, navbar toggle, dropdon wtc) -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
       crossorigin="anonymous"
     ></script>
+    <!-- Small image in the browser tab -->
     <link
       rel="icon"
       href="https://tgnrbgfnwubmcwxtlsxp.supabase.co/storage/v1/object/public/VintageKit/logo.ico"
     />
+    <!-- Link with the css of homepage -->
     <link rel="stylesheet" href="homepage.css" />
+    <!-- Gives acces to icons(cart) -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css"
     />
     <title>The Vintage Kits - Home</title>
+    <!-- Loading jquery -->
     <script src="jquery-3.6.1.js"></script>
     <script>
       // Load cart or start empty
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
+      //it turns it from json to js from the local storage
       $(document).ready(function () {
         renders();
       });
@@ -36,10 +42,11 @@
       $(document).on("click", ".productCard", goToProduct);
 
       function goToProduct() {
+        //reads the id attribute from the clicked
         const productId = $(this).data("id");
         window.location.href = `single-product.html?productId=${productId}`;
       }
-
+      //destination = bestsellersrow
       function loadProducts(products, destination) {
         for (const id of products) {
           fetch(`https://thevintagekit.onrender.com/product/${id}`) // change onrender url to "http://localhost:5134" for local deployment
@@ -128,19 +135,22 @@
     >
       <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
         <div class="container-fluid">
+          <!-- Logo -->
           <a class="navbar-brand" href="homepage.html"
             ><img
               src="https://tgnrbgfnwubmcwxtlsxp.supabase.co/storage/v1/object/public/VintageKit/logo%20png.png"
               width="90px"
           /></a>
+          <!-- Hamburger menu for mobile with toggle bootstrap -->
           <button
             class="navbar-toggler"
             type="button"
-            data-bs-toggle="collapse"
+            data-bs-toggle="collapse" 
             data-bs-target="#myNavbar"
           >
             <span class="navbar-toggler-icon"></span>
           </button>
+          <!-- Collapsible menu to add links and everything-->
           <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="navbar-nav me-auto">
               <li class="nav-item">
@@ -216,7 +226,7 @@
     </div>
 
     <!--Navbar Over-->
-
+    <!-- Image -->
     <div class="container-fluid" style="margin-top: 150px">
       <img
         class="img-fluid float-center w-100"
@@ -238,6 +248,7 @@
       </div>
 
       <script>
+        //Wait until html loaded then function starts
         $(document).ready(function () {
           const bestSellers = [10, 11, 25];
 
@@ -277,12 +288,13 @@
         style="width: 100%; background-color: black; height: 2px"
       />
 
+      <!--Now we will start the carousel-->
       <p class="text-center text-white display-5">
         <b>ICONIC WORLD CUP MOMENTS</b>
       </p>
 
       <div id="demo" class="carousel slide mt-3 mb-3" data-bs-ride="carousel">
-        <!--indicators-->
+        <!--indicators to show which slide are we on-->
         <div class="carousel-indicators">
           <button
             type="button"
@@ -306,6 +318,7 @@
         <!--slideshow/carousel-->
         <div class="carousel-inner">
           <center>
+            <!--Carousel items-->
             <div class="carousel-item">
               <img
                 src="https://tgnrbgfnwubmcwxtlsxp.supabase.co/storage/v1/object/public/VintageKit/gotze.png"
@@ -353,7 +366,7 @@
           </center>
         </div>
         <!--End of carousel-->
-
+        <!--The buttons left to right, our bootstrap handles the logic-->
         <button
           class="carousel-control-prev"
           type="button"
@@ -374,6 +387,7 @@
     </div>
 
     <!--FOOTER-->
+    <!--Seperated into columns with the help of bootstrap-->
     <footer class="text-center text-sm-start text-white bg-dark">
       <section class="bg-dark p-1">
         <div class="container text-center text-md-start mt-2">
