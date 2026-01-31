@@ -1,34 +1,20 @@
-using System;
+using backend.Data;
 using backend.Models;
-using Npgsql;
 
 namespace backend.Repositories;
 
 public class MessageRepository
 {
-    private readonly string _connectionString;
+    private readonly AppDbContext _context;
 
-    public MessageRepository()
+    public MessageRepository(AppDbContext context)
     {
-          _connectionString = Environment.GetEnvironmentVariable("SUPABASE_DB");
+        _context = context;
     }
 
-    public async Task CreateMessage(Message NewMessage)
+    public async Task CreateMessage(Message newMessage)
     {
-        await using var connection = new NpgsqlConnection(_connectionString);
-        await connection.OpenAsync();
-
-        await using var command = connection.CreateCommand();
-
-        command.CommandText = @"
-        INSERT into messages(name, email, comment)
-        VALUES (@name, @email, @comment)
-        ";
-
-        command.Parameters.AddWithValue("@name", NewMessage.Name);
-        command.Parameters.AddWithValue("@email", NewMessage.Email);
-        command.Parameters.AddWithValue("@comment", NewMessage.Comment);
-
-        await command.ExecuteNonQueryAsync();
+        _context.Messages.Add(newMessage);
+        await _context.SaveChangesAsync();
     }
 }
