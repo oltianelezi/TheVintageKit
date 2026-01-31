@@ -18,7 +18,6 @@
       });
 
       async function submitMessage() {
-        console.log("click");
         
         const payload = {
           name: $("#name").val(),
@@ -49,4 +48,3 @@
         e.preventDefault();
         submitMessage();
       });
- 

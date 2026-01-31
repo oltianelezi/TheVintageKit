@@ -1,37 +1,24 @@
-using System;
+using backend.Data;
 using backend.Models;
-using Npgsql;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories;
 
 public class OrderRepository
 {
-    private readonly string _connectionString;
+    private readonly AppDbContext _context;
 
-    public OrderRepository()
+    public OrderRepository(AppDbContext context)
     {
-          _connectionString = Environment.GetEnvironmentVariable("SUPABASE_DB");
+        _context = context;
     }
 
-    public async Task<int> CreateOrder(Order NewOrder)
+    public async Task<int> CreateOrder(Order newOrder)
     {
-        await using var connection = new NpgsqlConnection(_connectionString);
-        await connection.OpenAsync();
+        await _context.Orders.AddAsync(newOrder);
+        await _context.SaveChangesAsync();
 
-        await using var command = connection.CreateCommand();
-
-        command.CommandText = @"
-        INSERT into orders(totalprice, email, addressid)
-        VALUES (@totalprice, @email, @addressid)
-        RETURNING orderid;
-        ";
-
-        command.Parameters.AddWithValue("@totalprice", NewOrder.TotalPrice);
-        command.Parameters.AddWithValue("@email", NewOrder.Email);
-        command.Parameters.AddWithValue("@addressid", NewOrder.AddressId);
-
-        var newId = (long)await command.ExecuteScalarAsync();
-        return (int)newId;
+        return newOrder.OrderId;
     }
 
 }

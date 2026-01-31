@@ -37,7 +37,6 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> NewOrder([FromBody] OrderRequest request)
         {
-            // Add shipping address to db
             var newAddress = new Address
             {
                 FirstName = request.Address.FirstName,
@@ -51,7 +50,6 @@ namespace backend.Controllers
 
             int newAddressId = await _addressRepository.CreateNewAddress(newAddress);
 
-            // Add new Order to db
             var newOrder = new Order
             {
                 TotalPrice = request.PaymentAmount,
@@ -61,41 +59,35 @@ namespace backend.Controllers
 
             int newOrderId = await _orderRepository.CreateOrder(newOrder);
 
-            List<OrderItem> OrderList = new List<OrderItem>();
             var orderListEmail = new StringBuilder();
 
-            var orderItems = request.Order.Select(item => new OrderItem
+            foreach (var itemRequest in request.Order)
             {
-                ProductId = item.ProductId,
-                OrderId = newOrderId,
-                Quantity = item.Quantity,
-                Size = item.Size,
-                UnitPrice = item.UnitPrice
-            }).ToList();
+                var product = await _productRepository.GetProductById(itemRequest.ProductId);
 
-            var productTasks = request.Order.Select(item => _productRepository.GetProductById(item.ProductId)).ToList();
-            var products = await Task.WhenAll(productTasks);
+                var orderItem = new OrderItem
+                {
+                    ProductId = itemRequest.ProductId,
+                    OrderId = newOrderId,
+                    Quantity = itemRequest.Quantity,
+                    Size = itemRequest.Size,
+                    UnitPrice = itemRequest.UnitPrice
+                };
 
-            for (int i = 0; i < orderItems.Count; i++)
-            {
-                var productInfo = products[i];
-                var item = orderItems[i];
+                await _orderItemRepository.NewOrderItems(new List<OrderItem> { orderItem });
 
-                orderListEmail.AppendLine($"{productInfo.ProductName} | Size: {item.Size} | Amount: {item.Quantity} | Price: ${item.UnitPrice}");
+                orderListEmail.AppendLine($"{product.ProductName} | Size: {orderItem.Size} | Amount: {orderItem.Quantity} | Price: ${orderItem.UnitPrice}");
             }
 
             orderListEmail.AppendLine($"Total Price: ${newOrder.TotalPrice}");
 
-            var emailBody = $"Hello {newAddress.FirstName} {newAddress.LastName},\n\nYour order: \n{orderListEmail} has been received!";
+            var emailBody = $"Hello {newAddress.FirstName} {newAddress.LastName},\n\nYour order:\n{orderListEmail} has been received!";
+            
+            // replace temporary email with newOrder.Email
+            await _emailService.SendEmailAsync("oelezi23@epoka.edu.al", "Order Confirmation", emailBody);
 
-            // Replace temp mail with NewOrder.Email
-            // var emailTask = _emailService.SendEmailAsync("theicekiller16@gmail.com", "Order Confirmation", emailBody);
-            var saveItemsTask = _orderItemRepository.NewOrderItems(orderItems);
-
-            // await Task.WhenAll(emailTask, saveItemsTask); for when email is fixed on full deployment
-            await saveItemsTask;
-
-            return Ok();
+            return Ok(new { orderId = newOrderId });
         }
+
     }
 }
