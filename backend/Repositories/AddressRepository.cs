@@ -1,39 +1,23 @@
-using System;
-using Npgsql;
+using backend.Data;
 using backend.Models;
 
-namespace backend.Repositories;
-
-public class AddressRepository
+namespace backend.Repositories
 {
-    private readonly string _connectionString;
-
-    public AddressRepository()
+    public class AddressRepository
     {
-          _connectionString = Environment.GetEnvironmentVariable("SUPABASE_DB");
-    }
+        private readonly AppDbContext _context;
 
-    public async Task<int> CreateNewAddress(Address NewAddress)
-    {
-        await using var connection = new NpgsqlConnection(_connectionString);
-        await connection.OpenAsync();
+        public AddressRepository(AppDbContext context)
+        {
+            _context = context;
+        }
 
-        await using var command = connection.CreateCommand();
+        public async Task<int> CreateNewAddress(Address NewAddress)
+        {
+            await _context.Addresses.AddAsync(NewAddress);
+            await _context.SaveChangesAsync();
 
-        command.CommandText = @"
-                INSERT INTO addresses (firstname, lastname, city, country, state, street, zip)
-                VALUES (@firstname, @lastname, @city, @country, @state, @street, @zip)
-                RETURNING addressid;";
-
-        command.Parameters.AddWithValue("@firstname", NewAddress.FirstName);
-        command.Parameters.AddWithValue("@lastname", NewAddress.LastName);
-        command.Parameters.AddWithValue("@city", NewAddress.City);
-        command.Parameters.AddWithValue("@country", NewAddress.Country);
-        command.Parameters.AddWithValue("@state", NewAddress.State);
-        command.Parameters.AddWithValue("@street", NewAddress.Street);
-        command.Parameters.AddWithValue("@zip", NewAddress.Zip);
-
-        var newId = (long)await command.ExecuteScalarAsync(); // addressid is BIGINT in DB
-        return (int)newId;
+            return (int)NewAddress.AddressId;
+        }
     }
 }

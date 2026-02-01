@@ -69,8 +69,8 @@
         const league = params.get("league");
         // Fetch products
         const apiEndpoint = league
-          ? `https://thevintagekit.onrender.com/product/league/${league}`
-          : "https://thevintagekit.onrender.com/product";
+          ? `http://localhost:5134/product/league/${league}`
+          : "http://localhost:5134/product";
         fetch(apiEndpoint)
           .then((response) => response.json()) // parse JSON once
           .then((products) => {

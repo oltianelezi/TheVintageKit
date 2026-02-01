@@ -16,7 +16,7 @@
       //destination = bestsellersrow
       function loadProducts(products, destination) {
         for (const id of products) {
-          fetch(`https://thevintagekit.onrender.com/product/${id}`) // change onrender url to "http://localhost:5134" for local deployment
+          fetch(`http://localhost:5134/product/${id}`) // change onrender url to "http://localhost:5134" for local deployment
             .then((response) => response.json()) // parse JSON once
             .then((product) => {
               console.log(product);

@@ -76,7 +76,7 @@
 
                 // alert("Payment completed by " + details.payer.name.given_name);
 
-                fetch("https://thevintagekit.onrender.com/order", {
+                fetch("http://localhost:5134/order", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify(payload),

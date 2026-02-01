@@ -18,6 +18,7 @@
       });
 
       async function submitMessage() {
+        
         const payload = {
           name: $("#name").val(),
           email: $("#email").val(),
@@ -25,7 +26,7 @@
         };
 
         const response = await fetch(
-          "https://thevintagekit.onrender.com/message/sendMessage",
+          "http://localhost:5134/message/sendMessage",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -47,4 +48,3 @@
         e.preventDefault();
         submitMessage();
       });
- 

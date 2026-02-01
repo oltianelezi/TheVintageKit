@@ -1,10 +1,17 @@
 using backend.Models;
 using backend.Repositories;
 using backend.Services;
+using backend.Data;
+
+using Microsoft.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = Environment.GetEnvironmentVariable("SUPABASE_DB");
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    ));
 
 builder.Services.AddControllers();
 
